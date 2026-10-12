@@ -13,8 +13,25 @@ const portfolio = $('.portfolio');
 const cards = $$('.project-card');
 const cardDelays = cards.map(() => .34 + Math.random() * .07);
 const cardOffsets = cards.map(() => 45 + Math.random() * 75);
+const serviceChoices=[["residential","주거","a-home","취향은 선명하게, 생활은 편안하게.","취향과 생활을 듣고, 동선과 수납을 편안하게 바꿔요.","02-01"],["commercial","상업","a-cafe","브랜드는 또렷하게, 쓰임은 효율적으로.","브랜드의 첫인상부터 손님의 경험과 동선까지 연결해요.","03-01"],["office","사무","office-art","집중은 깊게, 협업은 자연스럽게.","팀의 일하는 방식에 맞춰 집중·회의·휴식의 균형을 맞춰요.","03-03"],["popup","팝업","popup-art","짧은 만남에도, 오래 남는 브랜드.","전시와 체험, 판매의 흐름에 브랜드의 이야기를 담아요.","03-05"]];
+let selectedService=0,manualServiceScene=null;
+function selectService(index){
+ if(selectedService===index&&document.querySelector('.selector-option.is-active'))return;
+ selectedService=index;
+ $$('.selector-option').forEach((item,i)=>{item.classList.toggle('is-active',i===index);$('[data-service-select]',item).setAttribute('aria-expanded',String(i===index));$('.selector-detail',item).hidden=i!==index;});
+ const art=$('#selector-art');art.className='atlas '+serviceChoices[index][2];art.setAttribute('aria-label',serviceChoices[index][1]+' 공간 일러스트');
+ $('#selector-image-number').textContent=['02-02','03-02','03-04','03-06'][index];
+ $('#selector-image-caption').textContent=['취향과 생활을 담는 집','브랜드를 담는 공간','집중과 협업을 연결하는 오피스','짧은 만남을 오래 남기는 공간'][index];
+}
+function updateServiceSelector(scene){
+ const section=$('.service-selector');if(reduce.matches){section.removeAttribute('style');section.inert=false;return;}
+ setSceneVisibility(section,clamp((scene-3.35)/.35));
+ if(manualServiceScene!==null&&Math.abs(scene-manualServiceScene)<.22)return;
+ manualServiceScene=null;selectService(Math.min(3,Math.max(0,Math.floor((scene-3.65)/.42))));
+}
+$$('[data-service-select]').forEach(button=>button.addEventListener('click',()=>{manualServiceScene=openingProgress();selectService(Number(button.dataset.serviceSelect));}));
 const typeLines = ['라이프스타일부터', '브랜드의 분위기까지.'];
-function openingProgress() { return clamp(-opening.getBoundingClientRect().top / Math.max(1, opening.offsetHeight - innerHeight)) * 7.5; }
+function openingProgress() { return clamp(-opening.getBoundingClientRect().top / Math.max(1, opening.offsetHeight - innerHeight)) * 5.6; }
 function setSceneVisibility(section, opacity) {
   section.style.opacity = opacity;
   section.style.visibility = opacity > .001 ? 'visible' : 'hidden';
@@ -103,7 +120,7 @@ function updateStory() {
     setSceneVisibility($('.hero-story'), 1 - clamp((scene - 3.7) / .25));
     $$('.service-story').forEach((section, index) => {
       const start = 3.35 + index * 2;
-      const fade = clamp((scene - start) / (index === 0 ? .35 : .3)) * (index === 0 ? 1 - clamp((scene - 5.2) / .3) : 1);
+      const fade = clamp((scene - start) / (index === 0 ? .35 : .3)) * (1 - clamp((scene - start - 1.85) / .3));
       setSceneVisibility(section, fade);
       const lift = clamp((scene - start - .45) / .65);
       const reveal = clamp((scene - start - .9) / .4);
@@ -116,6 +133,7 @@ function updateStory() {
       $('.service-details', section).style.transform = `translateY(${32 * (1 - reveal)}px)`;
     });
   }
+  updateServiceSelector(scene);
   const progress = reduce.matches ? 1 : clamp(-portfolio.getBoundingClientRect().top / Math.max(1, portfolio.offsetHeight - innerHeight));
   const layout = reduce.matches ? 1 : clamp((progress - .12) / .27);
   const totalLetters = typeLines.join('').length;
@@ -140,7 +158,7 @@ function updateStory() {
     card.style.transform = `translateY(${cardOffsets[index] * (1 - reveal)}px)`;
     card.inert = reveal < .05;
   });
-  let active = scene < 3.4 ? 'home' : scene < 5.35 ? 'residential' : 'commercial';
+  let active = scene < 3.4 ? 'home' : scene < 4.05 ? 'residential' : 'commercial';
   for (const id of ['portfolio', 'reviews', 'about', 'contact']) if ($('#' + id).getBoundingClientRect().top <= innerHeight * .45) active = id;
   $$('.section-rail a').forEach(link => {
     const selected = link.dataset.section === active;
@@ -162,7 +180,7 @@ function setMotionPreference() {
     $('.estimate-card').style.opacity = 1;
     $('.estimate-card').inert = false;
     [...$('.estimate-card').children].forEach(child => child.style.removeProperty('opacity'));
-    $$('.hero-story,.service-story').forEach(section => { section.removeAttribute('style'); section.inert = false; });
+    $$('.hero-story,.service-selector').forEach(section => { section.removeAttribute('style'); section.inert = false; });
     $$('.service-intro,.title-tail,.chapter,.service-details').forEach(node => node.removeAttribute('style'));
   }
   requestStory();
@@ -177,8 +195,8 @@ reduce.addEventListener('change', setMotionPreference);
 setMotionPreference();
 
 function jumpTo(id) {
-  const scenes = { home: 0, services: 3.75, residential: 3.75, commercial: 5.75 };
-  const top = !reduce.matches && id in scenes ? opening.offsetTop + (opening.offsetHeight - innerHeight) * scenes[id] / 7.5 : $('#' + id).getBoundingClientRect().top + scrollY;
+  const scenes = { home: 0, services: 3.75, residential: 3.75, commercial: 4.25, office: 4.65, popup: 5.1 };
+  const top = !reduce.matches && id in scenes ? opening.offsetTop + (opening.offsetHeight - innerHeight) * scenes[id] / 5.6 : $('#' + id).getBoundingClientRect().top + scrollY;
   scrollTo({ top, behavior: reduce.matches ? 'instant' : 'smooth' });
 }
 $$('a[href^="#"]').forEach(link => link.addEventListener('click', event => {

@@ -2,7 +2,7 @@
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const content=window.NEMO_CONTENT;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const visual=(key,alt,lazy=true)=>key==='office'?`<img class="office-image" src="assets/office.svg" alt="${alt}" ${lazy?'loading="lazy"':''}>`:key==='photo'?`<img src="assets/hero.png" alt="${alt}" ${lazy?'loading="lazy"':''}>`:`<div class="atlas ${key}" role="img" aria-label="${alt}"></div>`;
+  const visual=(key,alt,lazy=true)=>(key==='office'||key==='popup')?`<img class="office-image" src="assets/${key}-3d.png" alt="${alt}" ${lazy?'loading="lazy"':''}>`:key==='photo'?`<img src="assets/hero.png" alt="${alt}" ${lazy?'loading="lazy"':''}>`:`<div class="atlas ${key}" role="img" aria-label="${alt}"></div>`;
   const mode=document.body.dataset.page;
   $$('.page-header nav a').forEach(a=>{if(a.getAttribute('href') === (mode==='portfolio'?'portfolios.html':mode==='story'?'newsroom.html':mode+'.html'))a.setAttribute('aria-current','page');});
   const toggle=$('.page-menu-toggle');
@@ -21,7 +21,7 @@
   }
   if(mode==='portfolios'){
     const params=new URLSearchParams(location.search);
-    let category=['전체','주거','상업','사무'].includes(params.get('space'))?params.get('space'):'전체';
+    let category=['전체','주거','상업','사무','팝업','브랜딩','스타일링'].includes(params.get('space'))?params.get('space'):'전체';
     let style=['전체','내추럴','모던','미니멀'].includes(params.get('style'))?params.get('style'):'전체';
     $('#portfolio-search').value=params.get('q')||'';
     function render(){
@@ -72,10 +72,12 @@
   if(mode==='inquiry'){
     const form=$('#inquiry-form'),panels=$$('.inquiry-panel');let step=0;
     const params=new URLSearchParams(location.search),space=params.get('space');
-    if(['주거','상업','사무'].includes(space))$$('[name="space"]',form).forEach(x=>x.checked=x.value===space);
+    if(['주거','상업','사무','팝업'].includes(space))$$('[name="space"]',form).forEach(x=>x.checked=x.value===space);
+    function updateExtras(){const type=$('[name="space"]:checked',form)?.value||'주거';const showBrand=['상업','사무','팝업'].includes(type);$('#branding-option').hidden=!showBrand;$('[name="branding"]',form).disabled=!showBrand;if(!showBrand)$('[name="branding"]',form).checked=false;$('#extras-help').textContent=type==='주거'?'가구·조명·소품으로 분위기를 바꾸고 싶다면 스타일링을 선택해주세요. 선택하지 않아도 괜찮아요.':type==='사무'?'팀의 분위기를 담는 브랜딩과 가구·조명 스타일링이 필요하면 선택해주세요. 선택하지 않아도 괜찮아요.':'브랜드의 방향과 공간의 분위기도 함께 이야기하고 싶다면 선택해주세요. 선택하지 않아도 괜찮아요.';}
+    $$('[name="space"]',form).forEach(input=>input.addEventListener('change',updateExtras));updateExtras();
     const project=content.projects.find(p=>p.id===params.get('project'));
     if(project)$('[name="message"]',form).value=project.title+' 같은 분위기의 공간을 이야기하고 싶어요.';
-    function values(){const d=new FormData(form);if(d.has('areaCustom'))d.set('area',d.get('areaCustom')+' '+d.get('areaUnit'));if(d.has('budgetCustom'))d.set('budget',Number(d.get('budgetCustom')).toLocaleString('ko-KR')+'만 원');if(d.get('addressDetail'))d.set('location',d.get('location')+' '+d.get('addressDetail'));return d;}
+    function values(){const d=new FormData(form);d.set('additionalServices',[d.get('branding'),d.get('styling')].filter(Boolean).join(', ')||'선택 안 함');if(d.has('areaCustom'))d.set('area',d.get('areaCustom')+' '+d.get('areaUnit'));if(d.has('budgetCustom'))d.set('budget',Number(d.get('budgetCustom')).toLocaleString('ko-KR')+'만 원');if(d.get('addressDetail'))d.set('location',d.get('location')+' '+d.get('addressDetail'));return d;}
     $$('[data-direct]').forEach(button=>button.addEventListener('click',()=>{const key=button.dataset.direct,select=$('#'+key+'-select'),box=$('#'+key+'-direct'),direct=button.getAttribute('aria-expanded')!=='true';button.setAttribute('aria-expanded',String(direct));button.textContent=direct?'범위로 선택할게요':'직접 입력할게요';select.hidden=direct;select.disabled=direct;box.hidden=!direct;$$('input,select',box).forEach(field=>{field.disabled=!direct;if(field.tagName==='INPUT')field.required=direct;});if(direct)$('input',box).focus();}));
     const requiredConsents=$$('[name="termsConsent"],[name="privacyConsent"]',form);
     $('#consent-required-all').addEventListener('change',e=>{requiredConsents.forEach(x=>x.checked=e.target.checked);});
@@ -84,7 +86,7 @@
     function postcodeAPI(){return new Promise((resolve,reject)=>{if(window.kakao?.Postcode||window.daum?.Postcode){resolve(window.kakao?.Postcode||window.daum.Postcode);return;}if(postcodeLoading){postcodeLoading.then(resolve,reject);return;}postcodeLoading=new Promise((ok,fail)=>{const script=document.createElement('script');script.src='https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';script.onload=()=>{const API=window.kakao?.Postcode||window.daum?.Postcode;API?ok(API):fail(new Error('unavailable'));};script.onerror=()=>fail(new Error('network'));document.head.append(script);});postcodeLoading.then(resolve,e=>{postcodeLoading=null;reject(e);});});}
     $('#address-search').addEventListener('click',async()=>{const panel=$('#address-search-panel'),status=$('#address-search-status');panel.hidden=false;status.textContent='주소 검색을 준비하고 있어요.';$('#address-search').disabled=true;try{const API=await postcodeAPI();$('#address-search-container').replaceChildren();new API({width:'100%',height:'100%',oncomplete:data=>{const address=data.userSelectedType==='R'?data.roadAddress:data.jibunAddress;$('#space-address').value=address||data.address;$('#space-address').setCustomValidity('');panel.hidden=true;$('[name="addressDetail"]',form).focus();},onresize:data=>{$('#address-search-container').style.height=data.height+'px';}}).embed($('#address-search-container'));status.textContent='';panel.scrollIntoView({behavior:reduced?'instant':'smooth',block:'center'});}catch{status.textContent='주소 검색을 불러오지 못했어요. 주소를 직접 입력하거나 잠시 후 다시 검색해주세요.';}finally{$('#address-search').disabled=false;}});
     $('#address-search-close').addEventListener('click',()=>{$('#address-search-panel').hidden=true;$('#address-search').focus();});
-    const labels={space:'공간 유형',location:'공간 위치',area:'면적',budget:'예산',timing:'공사 시기',name:'성함',phone:'연락처',message:'원하는 변화'};
+    const labels={space:'공간 유형',additionalServices:'추가 서비스',location:'공간 위치',area:'면적',budget:'예산',timing:'공사 시기',name:'성함',phone:'연락처',message:'원하는 변화'};
     function summary(){const d=values();$('#inquiry-summary').replaceChildren();Object.entries(labels).forEach(([key,label])=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=d.get(key)||'상담하며 이야기할게요';$('#inquiry-summary').append(dt,dd);});}
     function validate(index){const fields=$$('input,select,textarea',panels[index]);fields.forEach(field=>{if(field.name==='phone'){const phone=field.value.trim(),digits=phone.replace(/\D/g,'');field.setCustomValidity(/^[+0-9 ()-]{8,25}$/.test(phone)&&digits.length>=8&&digits.length<=15?'':'숫자로 된 연락처를 입력해주세요.');}else if(field.required&&['name','location'].includes(field.name)){field.setCustomValidity(field.value.trim()?'':'필수 항목을 입력해주세요.');}});const invalid=fields.find(x=>!x.checkValidity());if(invalid){$('#inquiry-error').textContent=invalid.name==='confirm'?'이메일 발송 방식을 확인해주세요.':invalid.name==='phone'?'연락처를 다시 확인해주세요.':'필수 항목을 입력해주세요.';invalid.reportValidity();invalid.focus();return false;}$('#inquiry-error').textContent='';return true;}
     function go(index){step=index;panels.forEach((p,i)=>p.hidden=i!==step);$$('.inquiry-steps li').forEach((li,i)=>{if(i===step)li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});$('#inquiry-back').hidden=step===0;$('#inquiry-next').hidden=step===2;$('#inquiry-submit').hidden=step!==2;$('#inquiry-error').textContent='';if(step===2)summary();const h=$('h3',panels[step]);h.tabIndex=-1;h.focus({preventScroll:true});panels[step].scrollIntoView({behavior:reduced?'instant':'smooth',block:'start'});}
