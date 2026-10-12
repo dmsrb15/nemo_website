@@ -24,7 +24,7 @@ function updateStory() {
   const photo = $('.hero-photo');
   if (!reduce.matches) {
     const expand = clamp(scene / .45);
-    const shrink = clamp((scene - 1.45) / .7);
+    const shrink = clamp((scene - 1.8) / .7);
     const detail = clamp((scene - .6) / .35);
     const exit = clamp((scene - 2.6) / .8);
     const insetLeft = mobile ? 4 : 1.5;
@@ -42,17 +42,18 @@ function updateStory() {
     photo.style.transform = `translateY(${-exit * innerHeight * 1.1}px)`;
     $('.hero-title').style.opacity = 1 - clamp((scene - .55) / .3);
     $('.hero-caption').style.opacity = 1 - detail;
-    $('.estimate-copy').style.opacity = detail;
+    $('.estimate-copy').style.opacity = detail * (1 - clamp((scene - 1.05) / .3));
     $('.estimate-copy').style.transform = `translateY(${32 * (1 - detail)}px)`;
-    $('.estimate-card').style.opacity = detail * (1 - clamp((scene - 3.3) / .3));
-    const alignment = clamp((scene - 1.55) / .9);
+    $('.estimate-card').style.opacity = clamp((scene - 1.15) / .3) * (1 - clamp((scene - 3.3) / .3));
+    const travel = clamp((scene - 1.85) / .9);
+    const alignment = travel * travel * (3 - 2 * travel);
     const stage = $('.opening-stage').getBoundingClientRect();
     const target = $('.service-visual').getBoundingClientRect();
     const card = $('.estimate-card');
-    const startWidth = mobile ? Math.min(innerWidth * .72, 270) : 310;
-    const startHeight = 260;
+    const startWidth = mobile ? Math.min(innerWidth * .82, 340) : 390;
+    const startHeight = mobile ? 410 : Math.min(490, innerHeight * .74);
     const startLeft = innerWidth * (mobile ? .07 : .11);
-    const startTop = mobile ? innerHeight * .43 : Math.min(innerHeight * .62, innerHeight - 280);
+    const startTop = Math.max(mobile ? 100 : 105, (innerHeight - startHeight) / 2);
     card.style.right = 'auto';
     card.style.left = mix(startLeft, target.left - stage.left, alignment) + 'px';
     card.style.top = mix(startTop, target.top - stage.top, alignment) + 'px';
@@ -69,7 +70,7 @@ function updateStory() {
       const reveal = clamp((scene - start - .9) / .4);
       const title = $('.service-intro', section);
       title.style.transform = mobile ? `translate(-50%, ${mix(90, 0, lift)}px)` : `translateY(${mix(140, 0, lift)}px)`;
-      title.style.fontSize = mix(mobile ? 53 : Math.min(105, innerWidth * .075), mobile ? 31 : 46, lift) + 'px';
+      title.style.fontSize = mix(mobile ? 53 : 72, mobile ? 31 : 40, lift) + 'px';
       $('.title-tail', section).style.opacity = 1 - lift;
       $('.title-tail', section).style.maxWidth = mix(240, 0, lift) + 'px';
       $('.service-details', section).style.opacity = reveal;
