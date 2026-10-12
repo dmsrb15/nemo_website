@@ -9,7 +9,7 @@ let scrollQueued = false;
 const opening = $('.opening-story');
 const portfolio = $('.portfolio');
 const cards = $$('.project-card');
-const cardDelays = cards.map(() => .19 + Math.random() * .09);
+const cardDelays = cards.map(() => .34 + Math.random() * .07);
 const cardOffsets = cards.map(() => 45 + Math.random() * 75);
 const typeLines = ['라이프스타일부터', '브랜드의 분위기까지.'];
 function openingProgress() { return clamp(-opening.getBoundingClientRect().top / Math.max(1, opening.offsetHeight - innerHeight)) * 6; }
@@ -31,6 +31,7 @@ function updateStory() {
     photo.style.top = mix(mobile ? 95 : 130, mobile ? 40 : 70, shrink) + 'px';
     photo.style.height = mix(innerHeight - (mobile ? 115 : 148), innerHeight * .82, shrink) + 'px';
     photo.style.borderRadius = mix(0, mobile ? 30 : 65, shrink) + 'px';
+    $('.scene-number').style.opacity = 1 - exit;
     photo.style.transform = `translateY(${-exit * innerHeight * 1.1}px)`;
     $('.hero-title').style.opacity = 1 - clamp(scene / .5);
     $('.hero-caption').style.opacity = 1 - shrink;
@@ -46,7 +47,7 @@ function updateStory() {
       const lift = clamp((scene - start - .45) / .65);
       const reveal = clamp((scene - start - .9) / .4);
       const title = $('.service-intro', section);
-      title.style.transform = `translateY(${mix(mobile ? 105 : 180, 0, lift)}px)`;
+      title.style.transform = `translateY(${mix(mobile ? 90 : 140, 0, lift)}px)`;
       title.style.fontSize = mix(mobile ? 53 : Math.min(105, innerWidth * .075), mobile ? 31 : 46, lift) + 'px';
       $('.title-tail', section).style.opacity = 1 - lift;
       $('.title-tail', section).style.maxWidth = mix(240, 0, lift) + 'px';
@@ -56,15 +57,21 @@ function updateStory() {
     });
   }
   const progress = reduce.matches ? 1 : clamp(-portfolio.getBoundingClientRect().top / Math.max(1, portfolio.offsetHeight - innerHeight));
-  const letters = Math.round(clamp(progress / .18) * typeLines.join('').length);
+  const letters = Math.round(clamp(progress / .23) * typeLines.join('').length);
   $('#typing-one').textContent = typeLines[0].slice(0, letters);
   $('#typing-two').textContent = typeLines[1].slice(0, Math.max(0, letters - typeLines[0].length));
-  $('.typing-caret').style.opacity = progress < .2 && !reduce.matches ? 1 : 0;
+  $('.typing-caret').style.opacity = progress < .25 && !reduce.matches ? 1 : 0;
+  const layout = reduce.matches ? 1 : clamp((progress - .23) / .16);
+  $('.section-heading').style.top = mix(50, mobile ? 16 : 18, layout) + '%';
+  $('.section-heading').style.transform = `translate(-50%, -50%) scale(${mix(1, .84, layout)})`;
+  $('.filters').style.opacity = layout;
+  $('.filters').inert = layout < .5;
+  $('.portfolio-disclaimer').style.opacity = layout;
   const strip = $('.portfolio-strip');
-  const distance = Math.max(0, strip.scrollWidth - innerWidth + (mobile ? 48 : 150));
-  strip.style.transform = reduce.matches ? 'none' : `translateX(${-distance * clamp((progress - .4) / .54)}px)`;
+  const distance = Math.max(0, strip.scrollWidth - innerWidth);
+  strip.style.transform = reduce.matches ? 'none' : `translateX(${-distance * clamp((progress - .5) / .46)}px)`;
   cards.forEach((card, index) => {
-    const reveal = reduce.matches ? 1 : clamp((progress - cardDelays[index]) / .13);
+    const reveal = reduce.matches ? 1 : clamp((progress - cardDelays[index]) / .12);
     card.style.opacity = reveal;
     card.style.transform = `translateY(${cardOffsets[index] * (1 - reveal)}px)`;
     card.inert = reveal < .05;
@@ -153,16 +160,35 @@ $$('.header nav a').forEach(link => link.addEventListener('click', () => {
   $('.header').classList.remove('menu-open');
   $('.menu-toggle').setAttribute('aria-expanded', 'false');
 }));
+let filterTimer;
 function setFilter(category) {
+  clearTimeout(filterTimer);
   $$('.filters button').forEach(button => {
     const selected = button.dataset.filter === category;
     button.classList.toggle('active', selected);
     button.setAttribute('aria-pressed', String(selected));
+    if (selected) {
+      $('.filter-pill').style.width = button.offsetWidth + 'px';
+      $('.filter-pill').style.transform = `translateX(${button.offsetLeft - 5}px)`;
+    }
   });
-  $$('.project-card').forEach(card => card.hidden = category !== '전체' && card.dataset.category !== category);
-  $('.portfolio-strip').scrollLeft = 0;
-  requestStory();
+  const strip = $('.portfolio-strip');
+  strip.classList.add('filter-changing');
+  filterTimer = setTimeout(() => {
+    cards.forEach(card => card.hidden = category !== '전체' && card.dataset.category !== category);
+    strip.classList.toggle('filtered', category !== '전체');
+    strip.scrollLeft = 0;
+    updateStory();
+    requestAnimationFrame(() => strip.classList.remove('filter-changing'));
+  }, reduce.matches ? 0 : 220);
 }
+function alignFilterPill() {
+  const active = $('.filters button.active');
+  $('.filter-pill').style.width = active.offsetWidth + 'px';
+  $('.filter-pill').style.transform = `translateX(${active.offsetLeft - 5}px)`;
+}
+addEventListener('resize', alignFilterPill);
+alignFilterPill();
 $$('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
 const projects = {
   living: { title: '자연을 들이는 거실', type: '주거 / 공간 레퍼런스', photo: true, text: '큰 창으로 들어오는 빛, 따뜻한 원목, 편안한 소파. 자연을 가까이 두고 오래 머물고 싶은 공간의 분위기를 살펴보세요.' },
