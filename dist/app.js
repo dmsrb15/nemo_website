@@ -54,6 +54,12 @@ function updateStory() {
     const expand = clamp(scene / .45);
     const shrink = clamp((scene - 2.05) / .7);
     const detail = clamp((scene - .6) / .35);
+    const moreHint = $('.hero-more-hint');
+    const moreHintOpacity = clamp((scene - .7) / .3) * (1 - clamp((scene - 1.95) / .3));
+    moreHint.style.opacity = moreHintOpacity;
+    moreHint.style.visibility = moreHintOpacity > .001 ? 'visible' : 'hidden';
+    moreHint.setAttribute('aria-hidden', String(moreHintOpacity < .1));
+    moreHint.classList.toggle('is-visible', moreHintOpacity > .001);
     const exit = clamp((scene - 2.6) / .8);
     const insetLeft = mobile ? 4 : 1.5;
     const insetTop = mobile ? 95 : 130;
