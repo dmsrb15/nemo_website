@@ -5,6 +5,8 @@ const mix = (a, b, p) => a + (b - a) * p;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 let chosenSpace = '주거';
 let scrollQueued = false;
+let previousScrollY = scrollY;
+let upwardMenu = false;
 
 const opening = $('.opening-story');
 const portfolio = $('.portfolio');
@@ -50,13 +52,14 @@ function updateStory() {
     const stage = $('.opening-stage').getBoundingClientRect();
     const target = $('.service-visual').getBoundingClientRect();
     const card = $('.estimate-card');
-    const startWidth = mobile ? Math.min(innerWidth * .82, 340) : Math.min(440, innerWidth * .39);
-    const startHeight = mobile ? 410 : Math.min(530, innerHeight * .74);
-    const startLeft = stage.width * (mobile ? .93 : .89) - startWidth;
-    const startTop = Math.max(mobile ? 100 : 105, (innerHeight - startHeight) / 2);
+    const startWidth = mobile ? Math.min(innerWidth * .86, 355) : Math.min(550, innerWidth * .44);
+    const startHeight = mobile ? 450 : Math.min(640, innerHeight * .86);
+    const startLeft = stage.width * .94 - startWidth;
+    const startTop = mobile ? 85 : Math.max(36, innerHeight * .055);
+    const descent = Math.sin(Math.PI * alignment) * (mobile ? 45 : Math.min(90, innerHeight * .12));
     card.style.right = 'auto';
     card.style.left = mix(startLeft, target.left - stage.left, alignment) + 'px';
-    card.style.top = mix(startTop, target.top - stage.top, alignment) + 'px';
+    card.style.top = mix(startTop, target.top - stage.top, alignment) + descent + 'px';
     card.style.width = mix(startWidth, target.width, alignment) + 'px';
     card.style.height = mix(startHeight, target.height, alignment) + 'px';
     card.style.setProperty('--card-alignment', alignment);
@@ -78,15 +81,20 @@ function updateStory() {
     });
   }
   const progress = reduce.matches ? 1 : clamp(-portfolio.getBoundingClientRect().top / Math.max(1, portfolio.offsetHeight - innerHeight));
-  const letters = Math.round(clamp(progress / .23) * typeLines.join('').length);
+  const layout = reduce.matches ? 1 : clamp((progress - .12) / .27);
+  const totalLetters = typeLines.join('').length;
+  const letters = reduce.matches ? totalLetters : Math.round(mix(3, 8, clamp(progress / .12)) + (totalLetters - 8) * layout);
   $('#typing-one').textContent = typeLines[0].slice(0, letters);
   $('#typing-two').textContent = typeLines[1].slice(0, Math.max(0, letters - typeLines[0].length));
-  $('.typing-caret').style.opacity = progress < .25 && !reduce.matches ? 1 : 0;
-  const layout = reduce.matches ? 1 : clamp((progress - .23) / .16);
+  $('#typing-one').style.width = $('#typing-guide-one').offsetWidth + 'px';
+  $('#typing-two').style.width = $('#typing-guide-two').offsetWidth + 'px';
+  $('.typing-caret').style.opacity = letters < totalLetters && !reduce.matches ? 1 : 0;
   $('.section-heading').style.top = mix(50, mobile ? 16 : 18, layout) + '%';
-  $('.section-heading').style.transform = `translate(-50%, -50%) scale(${mix(1, .84, layout)})`;
-  $('.filters').style.opacity = layout;
-  $('.filters').inert = layout < .5;
+  $('.section-heading').style.transform = `translate(-50%, -50%) scale(${mix(mobile ? 1.08 : 1.5, .84, layout)})`;
+  $('.typing-reserve').style.opacity = mix(.23, .12, layout);
+  const filterReveal = clamp((layout - .9) / .1);
+  $('.filters').style.opacity = filterReveal;
+  $('.filters').inert = filterReveal < .5;
   const strip = $('.portfolio-strip');
   const distance = Math.max(0, strip.scrollWidth - innerWidth);
   strip.style.transform = reduce.matches ? 'none' : `translateX(${-distance * clamp((progress - .5) / .46)}px)`;
@@ -103,7 +111,7 @@ function updateStory() {
     link.classList.toggle('active', selected);
     if (selected) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
   });
-  $('.header').classList.toggle('at-end', document.documentElement.scrollHeight - scrollY - innerHeight < innerHeight * .35);
+  $('.header').classList.toggle('at-end', scrollY > 100 && (upwardMenu || $('.header').classList.contains('menu-open') || document.documentElement.scrollHeight - scrollY - innerHeight < innerHeight * .35));
   scrollQueued = false;
 }
 function requestStory() { if (!scrollQueued) { scrollQueued = true; requestAnimationFrame(updateStory); } }
@@ -121,7 +129,11 @@ function setMotionPreference() {
   }
   requestStory();
 }
-addEventListener('scroll', requestStory, { passive: true });
+addEventListener('scroll', () => {
+  const delta = scrollY - previousScrollY;
+  if (Math.abs(delta) > 6) { upwardMenu = delta < 0; previousScrollY = scrollY; }
+  requestStory();
+}, { passive: true });
 addEventListener('resize', requestStory);
 reduce.addEventListener('change', setMotionPreference);
 setMotionPreference();
