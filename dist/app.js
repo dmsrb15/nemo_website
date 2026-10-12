@@ -26,7 +26,7 @@ function updateStory() {
   const photo = $('.hero-photo');
   if (!reduce.matches) {
     const expand = clamp(scene / .45);
-    const shrink = clamp((scene - 1.8) / .7);
+    const shrink = clamp((scene - 2.05) / .7);
     const detail = clamp((scene - .6) / .35);
     const exit = clamp((scene - 2.6) / .8);
     const insetLeft = mobile ? 4 : 1.5;
@@ -44,30 +44,34 @@ function updateStory() {
     photo.style.transform = `translateY(${-exit * innerHeight * 1.1}px)`;
     $('.hero-title').style.opacity = 1 - clamp((scene - .55) / .3);
     $('.hero-caption').style.opacity = 1 - detail;
-    $('.estimate-copy').style.opacity = detail * (mobile ? 1 - clamp((scene - 1.05) / .3) : 1);
+    $('.estimate-copy').style.opacity = detail * (1 - clamp((scene - (mobile ? 1.05 : 2.65)) / .3));
     $('.estimate-copy').style.transform = `translateY(${32 * (1 - detail)}px)`;
-    $('.estimate-card').style.opacity = clamp((scene - 1.15) / .3) * (1 - clamp((scene - 3.3) / .3));
-    const travel = clamp((scene - 1.85) / .9);
-    const alignment = travel * travel * (3 - 2 * travel);
+    const cardReveal = clamp((scene - 1.15) / .35);
+    const handoff = clamp((scene - 3.35) / .35);
+    $('.estimate-card').style.opacity = cardReveal * (1 - handoff);
+    const travel = clamp((scene - 2.05) / 1.1);
+    const alignment = travel * travel * travel * (travel * (travel * 6 - 15) + 10);
     const stage = $('.opening-stage').getBoundingClientRect();
     const target = $('.service-visual').getBoundingClientRect();
     const card = $('.estimate-card');
-    const startWidth = mobile ? Math.min(innerWidth * .86, 355) : Math.min(550, innerWidth * .44);
-    const startHeight = mobile ? 450 : Math.min(640, innerHeight * .86);
-    const startLeft = stage.width * .94 - startWidth;
-    const startTop = mobile ? 85 : Math.max(36, innerHeight * .055);
-    const descent = Math.sin(Math.PI * alignment) * (mobile ? 45 : innerHeight * .12);
+    const cardContent = 1 - clamp((scene - 3.05) / .3);
+    [...card.children].forEach(child => child.style.opacity = cardContent);
+    const startWidth = mobile ? Math.min(stage.width * .84, 335) : Math.min(500, stage.width * .4);
+    const startHeight = mobile ? Math.min(450, innerHeight * .58) : Math.min(560, innerHeight * .78);
+    const startLeft = stage.width * (mobile ? .92 : .91) - startWidth;
+    const startTop = mobile ? innerHeight * .2 : Math.max(65, (innerHeight - startHeight) / 2 - 20);
     card.style.right = 'auto';
     card.style.left = mix(startLeft, target.left - stage.left, alignment) + 'px';
-    card.style.top = mix(startTop, target.top - stage.top, alignment) + descent + 'px';
+    card.style.top = mix(startTop, target.top - stage.top, alignment) + 'px';
     card.style.width = mix(startWidth, target.width, alignment) + 'px';
     card.style.height = mix(startHeight, target.height, alignment) + 'px';
     card.style.setProperty('--card-alignment', alignment);
-    card.style.transform = 'none';
-    setSceneVisibility($('.hero-story'), 1 - clamp((scene - 3.45) / .3));
+    card.style.transform = `translateY(${18 * (1 - cardReveal)}px)`;
+    card.inert = cardReveal < .5 || handoff > .5;
+    setSceneVisibility($('.hero-story'), 1 - clamp((scene - 3.7) / .25));
     $$('.service-story').forEach((section, index) => {
       const start = 3.35 + index * 2;
-      const fade = clamp((scene - start) / .3) * (index === 0 ? 1 - clamp((scene - 5.2) / .3) : 1);
+      const fade = clamp((scene - start) / (index === 0 ? .35 : .3)) * (index === 0 ? 1 - clamp((scene - 5.2) / .3) : 1);
       setSceneVisibility(section, fade);
       const lift = clamp((scene - start - .45) / .65);
       const reveal = clamp((scene - start - .9) / .4);
@@ -124,6 +128,8 @@ function setMotionPreference() {
     $('.estimate-copy').style.opacity = 0;
     $('.estimate-card').removeAttribute('style');
     $('.estimate-card').style.opacity = 1;
+    $('.estimate-card').inert = false;
+    [...$('.estimate-card').children].forEach(child => child.style.removeProperty('opacity'));
     $$('.hero-story,.service-story').forEach(section => { section.removeAttribute('style'); section.inert = false; });
     $$('.service-intro,.title-tail,.chapter,.service-details').forEach(node => node.removeAttribute('style'));
   }
