@@ -210,6 +210,7 @@ $$('[data-space]').forEach(button => button.addEventListener('click', () => {
   $$('[data-space]').forEach(item => item.classList.toggle('selected', item === button));
   const art = $('.mini-art');
   art.classList.toggle('a-home', chosenSpace === '주거');
+  art.classList.toggle('office-art', chosenSpace === '사무');
   art.classList.toggle('a-cafe', chosenSpace === '상업');
 }));
 $('.menu-toggle').addEventListener('click', () => {
@@ -252,17 +253,6 @@ addEventListener('resize', alignFilterPill);
 alignFilterPill();
 $$('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
 $$('[data-project]').forEach(card => card.addEventListener('click', () => { location.href = 'portfolio.html?project=' + encodeURIComponent(card.dataset.project); }));
-const information = {
-  news: { title: '네모의 새로운 이야기', eyebrow: 'NEWSROOM', text: '공간과 디자인에 대한 이야기를 준비하고 있어요. 네모의 새로운 소식을 이곳에서 만나보세요.' },
-  careers: { title: '함께 공간을 만들어갈 분들', eyebrow: 'CAREERS', text: '채용 공고는 아직 등록되지 않았어요. 네모와의 협업이나 채용 관련 문의는 아래 이메일로 연락해주세요.' },
-  privacy: { title: '개인정보 안내', eyebrow: 'PRIVACY', text: '입력한 내용은 이 페이지에 저장하지 않아요. 이메일 초안을 열면 작성한 정보가 사용자의 이메일 앱에 전달돼요. 보내기 전에 내용을 확인해주세요.' },
-  terms: { title: '이용 안내', eyebrow: 'TERMS', text: '상담 신청만으로 계약이나 예약이 확정되지는 않아요. 공간의 조건과 원하는 변화를 함께 살펴본 뒤, 필요한 과정과 비용을 안내해드려요.' }
-};
-$$('[data-info]').forEach(button => button.addEventListener('click', () => {
-  const info = information[button.dataset.info];
-  $('#detail-content').innerHTML = `<span class="eyebrow">${info.eyebrow}</span><h2 id="detail-title">${info.title}</h2><p>${info.text}</p><a class="button pale" href="mailto:nemo_interior_@naver.com">이메일 문의 ↗</a>`;
-  openDialog($('#detail-dialog'));
-}));
 // Fictional review content for the user-approved map preview.
 const regionalReviews = {
   seoul: { region: '서울 · 주거 공간', person: '김** 님', quote: '좋아하는 색과 소재를 하나씩 이야기했는데, 완성된 공간에 제 취향이 자연스럽게 담겼어요.' },

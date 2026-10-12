@@ -2,13 +2,12 @@
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const content=window.NEMO_CONTENT;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const visual=(key,alt,lazy=true)=>key==='photo'?`<img src="assets/hero.png" alt="${alt}" ${lazy?'loading="lazy"':''}>`:`<div class="atlas ${key}" role="img" aria-label="${alt}"></div>`;
+  const visual=(key,alt,lazy=true)=>key==='office'?`<img class="office-image" src="assets/office.svg" alt="${alt}" ${lazy?'loading="lazy"':''}>`:key==='photo'?`<img src="assets/hero.png" alt="${alt}" ${lazy?'loading="lazy"':''}>`:`<div class="atlas ${key}" role="img" aria-label="${alt}"></div>`;
   const mode=document.body.dataset.page;
   $$('.page-header nav a').forEach(a=>{if(a.getAttribute('href') === (mode==='portfolio'?'portfolios.html':mode==='story'?'newsroom.html':mode+'.html'))a.setAttribute('aria-current','page');});
   const toggle=$('.page-menu-toggle');
   toggle.addEventListener('click',()=>{const open=$('.page-header').classList.toggle('menu-open');toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'메뉴 닫기':'메뉴 열기');});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('.page-header').classList.remove('menu-open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','메뉴 열기');}});
-  $$('[data-careers]').forEach(button=>button.addEventListener('click',()=>$('#careers-dialog').showModal()));
   $$('dialog').forEach(dialog=>{
     $('.page-dialog-close',dialog).addEventListener('click',()=>dialog.close());
     dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))dialog.close();});
@@ -22,7 +21,7 @@
   }
   if(mode==='portfolios'){
     const params=new URLSearchParams(location.search);
-    let category=['전체','주거','상업'].includes(params.get('space'))?params.get('space'):'전체';
+    let category=['전체','주거','상업','사무'].includes(params.get('space'))?params.get('space'):'전체';
     let style=['전체','내추럴','모던','미니멀'].includes(params.get('style'))?params.get('style'):'전체';
     $('#portfolio-search').value=params.get('q')||'';
     function render(){
@@ -73,16 +72,24 @@
   if(mode==='inquiry'){
     const form=$('#inquiry-form'),panels=$$('.inquiry-panel');let step=0;
     const params=new URLSearchParams(location.search),space=params.get('space');
-    if(['주거','상업'].includes(space))$$('[name="space"]',form).forEach(x=>x.checked=x.value===space);
+    if(['주거','상업','사무'].includes(space))$$('[name="space"]',form).forEach(x=>x.checked=x.value===space);
     const project=content.projects.find(p=>p.id===params.get('project'));
     if(project)$('[name="message"]',form).value=project.title+' 같은 분위기의 공간을 이야기하고 싶어요.';
-    function values(){return new FormData(form);}
+    function values(){const d=new FormData(form);if(d.has('areaCustom'))d.set('area',d.get('areaCustom')+' '+d.get('areaUnit'));if(d.has('budgetCustom'))d.set('budget',Number(d.get('budgetCustom')).toLocaleString('ko-KR')+'만 원');if(d.get('addressDetail'))d.set('location',d.get('location')+' '+d.get('addressDetail'));return d;}
+    $$('[data-direct]').forEach(button=>button.addEventListener('click',()=>{const key=button.dataset.direct,select=$('#'+key+'-select'),box=$('#'+key+'-direct'),direct=button.getAttribute('aria-expanded')!=='true';button.setAttribute('aria-expanded',String(direct));button.textContent=direct?'범위로 선택할게요':'직접 입력할게요';select.hidden=direct;select.disabled=direct;box.hidden=!direct;$$('input,select',box).forEach(field=>{field.disabled=!direct;if(field.tagName==='INPUT')field.required=direct;});if(direct)$('input',box).focus();}));
+    const requiredConsents=$$('[name="termsConsent"],[name="privacyConsent"]',form);
+    $('#consent-required-all').addEventListener('change',e=>{requiredConsents.forEach(x=>x.checked=e.target.checked);});
+    requiredConsents.forEach(x=>x.addEventListener('change',()=>{const count=requiredConsents.filter(x=>x.checked).length;$('#consent-required-all').checked=count===requiredConsents.length;$('#consent-required-all').indeterminate=count>0&&count<requiredConsents.length;}));
+    let postcodeLoading;
+    function postcodeAPI(){return new Promise((resolve,reject)=>{if(window.kakao?.Postcode||window.daum?.Postcode){resolve(window.kakao?.Postcode||window.daum.Postcode);return;}if(postcodeLoading){postcodeLoading.then(resolve,reject);return;}postcodeLoading=new Promise((ok,fail)=>{const script=document.createElement('script');script.src='https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';script.onload=()=>{const API=window.kakao?.Postcode||window.daum?.Postcode;API?ok(API):fail(new Error('unavailable'));};script.onerror=()=>fail(new Error('network'));document.head.append(script);});postcodeLoading.then(resolve,e=>{postcodeLoading=null;reject(e);});});}
+    $('#address-search').addEventListener('click',async()=>{const panel=$('#address-search-panel'),status=$('#address-search-status');panel.hidden=false;status.textContent='주소 검색을 준비하고 있어요.';$('#address-search').disabled=true;try{const API=await postcodeAPI();$('#address-search-container').replaceChildren();new API({width:'100%',height:'100%',oncomplete:data=>{const address=data.userSelectedType==='R'?data.roadAddress:data.jibunAddress;$('#space-address').value=address||data.address;$('#space-address').setCustomValidity('');panel.hidden=true;$('[name="addressDetail"]',form).focus();},onresize:data=>{$('#address-search-container').style.height=data.height+'px';}}).embed($('#address-search-container'));status.textContent='';panel.scrollIntoView({behavior:reduced?'instant':'smooth',block:'center'});}catch{status.textContent='주소 검색을 불러오지 못했어요. 주소를 직접 입력하거나 잠시 후 다시 검색해주세요.';}finally{$('#address-search').disabled=false;}});
+    $('#address-search-close').addEventListener('click',()=>{$('#address-search-panel').hidden=true;$('#address-search').focus();});
     const labels={space:'공간 유형',location:'공간 위치',area:'면적',budget:'예산',timing:'공사 시기',name:'성함',phone:'연락처',message:'원하는 변화'};
     function summary(){const d=values();$('#inquiry-summary').replaceChildren();Object.entries(labels).forEach(([key,label])=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=d.get(key)||'상담하며 이야기할게요';$('#inquiry-summary').append(dt,dd);});}
     function validate(index){const fields=$$('input,select,textarea',panels[index]);fields.forEach(field=>{if(field.name==='phone'){const phone=field.value.trim(),digits=phone.replace(/\D/g,'');field.setCustomValidity(/^[+0-9 ()-]{8,25}$/.test(phone)&&digits.length>=8&&digits.length<=15?'':'숫자로 된 연락처를 입력해주세요.');}else if(field.required&&['name','location'].includes(field.name)){field.setCustomValidity(field.value.trim()?'':'필수 항목을 입력해주세요.');}});const invalid=fields.find(x=>!x.checkValidity());if(invalid){$('#inquiry-error').textContent=invalid.name==='confirm'?'이메일 발송 방식을 확인해주세요.':invalid.name==='phone'?'연락처를 다시 확인해주세요.':'필수 항목을 입력해주세요.';invalid.reportValidity();invalid.focus();return false;}$('#inquiry-error').textContent='';return true;}
     function go(index){step=index;panels.forEach((p,i)=>p.hidden=i!==step);$$('.inquiry-steps li').forEach((li,i)=>{if(i===step)li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});$('#inquiry-back').hidden=step===0;$('#inquiry-next').hidden=step===2;$('#inquiry-submit').hidden=step!==2;$('#inquiry-error').textContent='';if(step===2)summary();const h=$('h3',panels[step]);h.tabIndex=-1;h.focus({preventScroll:true});panels[step].scrollIntoView({behavior:reduced?'instant':'smooth',block:'start'});}
     $('#inquiry-next').addEventListener('click',()=>{if(validate(step))go(step+1);});$('#inquiry-back').addEventListener('click',()=>go(step-1));
-    function emailBody(){const d=values();return 'NEMO 인테리어 상담 요청\n\n'+Object.entries(labels).map(([key,label])=>label+': '+(d.get(key)||'상담하며 이야기할게요')).join('\n');}
+    function emailBody(){const d=values();return 'NEMO 인테리어 상담 요청\n\n'+Object.entries(labels).map(([key,label])=>label+': '+(d.get(key)||'상담하며 이야기할게요')).join('\n')+'\n\n동의 기록 (안내문 버전: 2026-10-12)\n이용약관: '+(d.has('termsConsent')?'동의':'미동의')+'\n개인정보 수집·이용: '+(d.has('privacyConsent')?'동의':'미동의')+'\n마케팅 정보 활용: '+(d.has('marketingUse')?'동의':'미동의')+'\n마케팅 정보 수신: '+(d.has('marketingReceive')?'동의':'미동의')+'\n동의 기록 작성 시각: '+new Date().toISOString();}
     form.addEventListener('submit',e=>{e.preventDefault();if(step<2){if(validate(step))go(step+1);return;}if(!validate(0)){go(0);return;}if(!validate(1)){go(1);return;}if(!validate(2))return;$('.inquiry-fallback').hidden=false;location.href='mailto:nemo_interior_@naver.com?subject='+encodeURIComponent('[NEMO] 인테리어 상담 요청')+'&body='+encodeURIComponent(emailBody());});
     $('#copy-inquiry').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(emailBody());$('#copy-inquiry').textContent='작성 내용을 복사했어요 ✓';}catch{$('#inquiry-error').textContent='내용 확인 화면에서 작성 내용을 선택해 복사해주세요.';}});
   }
