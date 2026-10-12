@@ -20,7 +20,33 @@ function setSceneVisibility(section, opacity) {
   section.style.visibility = opacity > .001 ? 'visible' : 'hidden';
   section.inert = opacity < .5;
 }
+function updateProcess() {
+  const process = $('.process');
+  const steps = $$('.process-step', process);
+  const buttons = $$('[data-process]', process);
+  const progress = clamp(-process.getBoundingClientRect().top / Math.max(1, process.offsetHeight - innerHeight));
+  const position = Math.min(3, progress * 3.4);
+  const active = Math.round(position);
+  steps.forEach((step, index) => {
+    const copy = $('.process-copy', step);
+    if (reduce.matches) { step.removeAttribute('style'); copy.style.removeProperty('opacity'); step.inert = false; step.removeAttribute('aria-hidden'); return; }
+    const delta = position - index;
+    const opacity = clamp(1 - Math.abs(delta));
+    step.style.opacity = opacity;
+    copy.style.opacity = opacity > 0 ? clamp(1 - Math.abs(delta) * 2.2) / opacity : 0;
+    step.style.visibility = opacity > .001 ? 'visible' : 'hidden';
+    step.style.setProperty('--step-shift', (delta * -48) + 'px');
+    step.style.setProperty('--art-scale', 1 - Math.min(1,Math.abs(delta)) * .12);
+    step.inert = index !== active;
+    step.setAttribute('aria-hidden', String(index !== active));
+  });
+  buttons.forEach((button,index) => {
+    if (index === active) button.setAttribute('aria-current','step'); else button.removeAttribute('aria-current');
+  });
+  $('.process-progress i').style.transform = 'scaleX(' + progress + ')';
+}
 function updateStory() {
+  updateProcess();
   const mobile = innerWidth <= 760;
   const scene = openingProgress();
   const photo = $('.hero-photo');
@@ -368,4 +394,20 @@ $$('.review-board').forEach(board => {
   addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(rebuildReviewLoop, 150); });
   reduce.addEventListener('change', rebuildReviewLoop);
   rebuildReviewLoop();
+});
+
+// Scroll and direct selection share the same process timeline.
+$$('[data-process]').forEach((button,index,buttons) => {
+  function selectStep() {
+    const process = $('.process');
+    const top = reduce.matches ? $$('.process-step')[index].getBoundingClientRect().top + scrollY : process.getBoundingClientRect().top + scrollY + (process.offsetHeight - innerHeight) * index / 3.4;
+    scrollTo({top,behavior:reduce.matches ? 'instant':'smooth'});
+  }
+  button.addEventListener('click',selectStep);
+  button.addEventListener('keydown',event => {
+    if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+    event.preventDefault();
+    const target = event.key === 'Home' ? 0 : event.key === 'End' ? 3 : (index + (event.key === 'ArrowRight' ? 1 : -1) + 4) % 4;
+    buttons[target].focus({preventScroll:true}); buttons[target].click();
+  });
 });
