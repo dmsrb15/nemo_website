@@ -155,7 +155,7 @@ $$('a[href^="#"]').forEach(link => link.addEventListener('click', event => {
   event.preventDefault(); jumpTo(id); history.replaceState(null, '', '#' + id);
 }));
 if (location.hash && $(location.hash)) requestAnimationFrame(() => jumpTo(location.hash.slice(1)));
-$$('.review-track').forEach(track => { const duplicate = track.cloneNode(true); duplicate.classList.add('review-duplicate'); duplicate.setAttribute('aria-hidden', 'true'); track.parentElement.appendChild(duplicate); });
+// The marquee is initialized as one shared animated runner below.
 function openDialog(dialog) {
   $$('.header')[0].classList.remove('menu-open');
   $('.menu-toggle').setAttribute('aria-expanded', 'false');
@@ -261,13 +261,13 @@ $('#consult-form').addEventListener('submit', event => {
 
 // Fictional review content for the user-approved map preview.
 const regionalReviews = {
-  seoul: { region: '서울 · 주거 공간', person: '김민서 님', quote: '좋아하는 색과 소재를 하나씩 이야기했는데, 완성된 공간에 제 취향이 자연스럽게 담겼어요.' },
-  gangneung: { region: '강릉 · 카페', person: '박서윤 님', quote: '창밖 풍경과 실내 분위기가 이어져요. 손님들이 편하게 머무는 모습을 보면 기분이 좋아요.' },
-  daejeon: { region: '대전 · 주거 공간', person: '이도현 님', quote: '수납과 동선을 함께 바꾸니 집이 훨씬 편해졌어요. 같은 면적인데도 더 넓게 느껴져요.' },
-  daegu: { region: '대구 · 브랜드 매장', person: '정하린 님', quote: '작은 매장 안에서도 우리 브랜드의 색이 또렷하게 보여요. 처음 들어오는 순간부터 분위기가 달라졌어요.' },
-  busan: { region: '부산 · 주거 공간', person: '최지우 님', quote: '빛이 들어오는 방향까지 생각해주셨어요. 아침마다 거실에 앉아 있는 시간이 즐거워졌어요.' },
-  gwangju: { region: '광주 · 작업 공간', person: '한유진 님', quote: '작업에 집중하는 자리와 쉬는 자리를 나누니 하루의 리듬이 더 좋아졌어요.' },
-  jeju: { region: '제주 · 숙박 공간', person: '오지훈 님', quote: '자연스러운 소재와 따뜻한 조명 덕분에, 잠깐 머물러도 오래 기억되는 공간이 됐어요.' }
+  seoul: { region: '서울 · 주거 공간', person: '김** 님', quote: '좋아하는 색과 소재를 하나씩 이야기했는데, 완성된 공간에 제 취향이 자연스럽게 담겼어요.' },
+  gangneung: { region: '강릉 · 카페', person: '박** 님', quote: '창밖 풍경과 실내 분위기가 이어져요. 손님들이 편하게 머무는 모습을 보면 기분이 좋아요.' },
+  daejeon: { region: '대전 · 주거 공간', person: '이** 님', quote: '수납과 동선을 함께 바꾸니 집이 훨씬 편해졌어요. 같은 면적인데도 더 넓게 느껴져요.' },
+  daegu: { region: '대구 · 브랜드 매장', person: '정** 님', quote: '작은 매장 안에서도 우리 브랜드의 색이 또렷하게 보여요. 처음 들어오는 순간부터 분위기가 달라졌어요.' },
+  busan: { region: '부산 · 주거 공간', person: '최** 님', quote: '빛이 들어오는 방향까지 생각해주셨어요. 아침마다 거실에 앉아 있는 시간이 즐거워졌어요.' },
+  gwangju: { region: '광주 · 작업 공간', person: '한** 님', quote: '작업에 집중하는 자리와 쉬는 자리를 나누니 하루의 리듬이 더 좋아졌어요.' },
+  jeju: { region: '제주 · 숙박 공간', person: '오** 님', quote: '자연스러운 소재와 따뜻한 조명 덕분에, 잠깐 머물러도 오래 기억되는 공간이 됐어요.' }
 };
 const reviewPins = $$('.review-pin');
 const mapPopup = $('#map-review-popup');
@@ -313,3 +313,59 @@ function updateKoreanClock() {
 updateKoreanClock();
 setInterval(() => { if (!document.hidden) updateKoreanClock(); }, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) updateKoreanClock(); });
+
+const regionTabs = $$('.review-region-tabs [role="tab"]');
+function selectReviewRegion(tab) {
+  pinnedReview = null;
+  hideRegionalReview();
+  regionTabs.forEach(item => {
+    const selected = item === tab;
+    item.setAttribute('aria-selected', String(selected));
+    item.tabIndex = selected ? 0 : -1;
+    $('#' + item.getAttribute('aria-controls')).hidden = !selected;
+  });
+}
+regionTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => selectReviewRegion(tab));
+  tab.addEventListener('keydown', event => {
+    let next;
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') next = regionTabs[(index + 1) % regionTabs.length];
+    if (event.key === 'Home') next = regionTabs[0];
+    if (event.key === 'End') next = regionTabs[regionTabs.length - 1];
+    if (next) { event.preventDefault(); selectReviewRegion(next); next.focus(); }
+  });
+});
+
+// One runner and two identical units share a single animation phase.
+$$('.review-board').forEach(board => {
+  const unit = $('.review-track', board);
+  const sourceQuotes = [...unit.children].map(quote => quote.cloneNode(true));
+  const runner = document.createElement('div');
+  runner.className = 'review-runner';
+  board.replaceChildren(runner);
+  runner.append(unit);
+  function rebuildReviewLoop() {
+    const currentTime = runner.getAnimations()[0]?.currentTime || 0;
+    unit.replaceChildren(...sourceQuotes.map(quote => quote.cloneNode(true)));
+    let repetitions = 0;
+    while (unit.getBoundingClientRect().width < board.clientWidth + 360 && repetitions < 12) {
+      const extras = sourceQuotes.map(quote => { const extra = quote.cloneNode(true); extra.setAttribute('aria-hidden', 'true'); return extra; });
+      unit.append(...extras);
+      repetitions++;
+    }
+    const duplicate = unit.cloneNode(true);
+    duplicate.classList.add('review-duplicate');
+    duplicate.setAttribute('aria-hidden', 'true');
+    duplicate.inert = true;
+    runner.replaceChildren(unit, duplicate);
+    const loopWidth = unit.getBoundingClientRect().width;
+    const duration = loopWidth / 43;
+    runner.style.setProperty('--review-loop-duration', duration + 's');
+    const animation = runner.getAnimations()[0];
+    if (animation) animation.currentTime = Number(currentTime) % (duration * 1000);
+  }
+  let resizeTimer;
+  addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(rebuildReviewLoop, 150); });
+  reduce.addEventListener('change', rebuildReviewLoop);
+  rebuildReviewLoop();
+});
