@@ -52,8 +52,8 @@ function updateStory() {
     const stage = $('.opening-stage').getBoundingClientRect();
     const target = $('.service-visual').getBoundingClientRect();
     const card = $('.estimate-card');
-    const startWidth = mobile ? Math.min(innerWidth * .86, 355) : stage.width * .44;
-    const startHeight = mobile ? 450 : innerHeight * .82;
+    const startWidth = mobile ? Math.min(innerWidth * .86, 355) : Math.min(550, innerWidth * .44);
+    const startHeight = mobile ? 450 : Math.min(640, innerHeight * .86);
     const startLeft = stage.width * .94 - startWidth;
     const startTop = mobile ? 85 : Math.max(36, innerHeight * .055);
     const descent = Math.sin(Math.PI * alignment) * (mobile ? 45 : innerHeight * .12);
