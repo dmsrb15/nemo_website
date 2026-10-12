@@ -42,7 +42,7 @@ function updateStory() {
     photo.style.transform = `translateY(${-exit * innerHeight * 1.1}px)`;
     $('.hero-title').style.opacity = 1 - clamp((scene - .55) / .3);
     $('.hero-caption').style.opacity = 1 - detail;
-    $('.estimate-copy').style.opacity = detail * (1 - clamp((scene - 1.05) / .3));
+    $('.estimate-copy').style.opacity = detail * (mobile ? 1 - clamp((scene - 1.05) / .3) : 1);
     $('.estimate-copy').style.transform = `translateY(${32 * (1 - detail)}px)`;
     $('.estimate-card').style.opacity = clamp((scene - 1.15) / .3) * (1 - clamp((scene - 3.3) / .3));
     const travel = clamp((scene - 1.85) / .9);
@@ -50,9 +50,9 @@ function updateStory() {
     const stage = $('.opening-stage').getBoundingClientRect();
     const target = $('.service-visual').getBoundingClientRect();
     const card = $('.estimate-card');
-    const startWidth = mobile ? Math.min(innerWidth * .82, 340) : 390;
-    const startHeight = mobile ? 410 : Math.min(490, innerHeight * .74);
-    const startLeft = innerWidth * (mobile ? .07 : .11);
+    const startWidth = mobile ? Math.min(innerWidth * .82, 340) : Math.min(440, innerWidth * .39);
+    const startHeight = mobile ? 410 : Math.min(530, innerHeight * .74);
+    const startLeft = stage.width * (mobile ? .93 : .89) - startWidth;
     const startTop = Math.max(mobile ? 100 : 105, (innerHeight - startHeight) / 2);
     card.style.right = 'auto';
     card.style.left = mix(startLeft, target.left - stage.left, alignment) + 'px';
