@@ -258,3 +258,58 @@ $('#consult-form').addEventListener('submit', event => {
   $('#form-status').textContent = '이메일 앱에서 초안을 확인하고 직접 보내주세요. 앱이 열리지 않으면 nemo_interior_@naver.com으로 문의해주세요.';
   location.href = href;
 });
+
+// Fictional review content for the user-approved map preview.
+const regionalReviews = {
+  seoul: { region: '서울 · 주거 공간', person: '김민서 님', quote: '좋아하는 색과 소재를 하나씩 이야기했는데, 완성된 공간에 제 취향이 자연스럽게 담겼어요.' },
+  gangneung: { region: '강릉 · 카페', person: '박서윤 님', quote: '창밖 풍경과 실내 분위기가 이어져요. 손님들이 편하게 머무는 모습을 보면 기분이 좋아요.' },
+  daejeon: { region: '대전 · 주거 공간', person: '이도현 님', quote: '수납과 동선을 함께 바꾸니 집이 훨씬 편해졌어요. 같은 면적인데도 더 넓게 느껴져요.' },
+  daegu: { region: '대구 · 브랜드 매장', person: '정하린 님', quote: '작은 매장 안에서도 우리 브랜드의 색이 또렷하게 보여요. 처음 들어오는 순간부터 분위기가 달라졌어요.' },
+  busan: { region: '부산 · 주거 공간', person: '최지우 님', quote: '빛이 들어오는 방향까지 생각해주셨어요. 아침마다 거실에 앉아 있는 시간이 즐거워졌어요.' },
+  gwangju: { region: '광주 · 작업 공간', person: '한유진 님', quote: '작업에 집중하는 자리와 쉬는 자리를 나누니 하루의 리듬이 더 좋아졌어요.' },
+  jeju: { region: '제주 · 숙박 공간', person: '오지훈 님', quote: '자연스러운 소재와 따뜻한 조명 덕분에, 잠깐 머물러도 오래 기억되는 공간이 됐어요.' }
+};
+const reviewPins = $$('.review-pin');
+const mapPopup = $('#map-review-popup');
+let pinnedReview = null;
+let shownReview = null;
+function showRegionalReview(pin) {
+  const review = regionalReviews[pin.dataset.review];
+  if (!review) return;
+  shownReview = pin;
+  $('.map-review-region').textContent = review.region;
+  $('.map-review-person').textContent = review.person;
+  $('.map-review-quote').textContent = '“' + review.quote + '”';
+  mapPopup.hidden = false;
+  reviewPins.forEach(item => { item.classList.toggle('selected', item === pin); item.setAttribute('aria-expanded', String(item === pin)); });
+}
+function hideRegionalReview() {
+  shownReview = null;
+  mapPopup.hidden = true;
+  reviewPins.forEach(pin => { pin.classList.remove('selected'); pin.setAttribute('aria-expanded', 'false'); });
+}
+reviewPins.forEach(pin => {
+  pin.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') showRegionalReview(pin); });
+  pin.addEventListener('pointerleave', () => { if (!pinnedReview && document.activeElement !== pin) hideRegionalReview(); });
+  pin.addEventListener('focus', () => showRegionalReview(pin));
+  pin.addEventListener('blur', () => { if (!pinnedReview) hideRegionalReview(); });
+  pin.addEventListener('click', () => {
+    pinnedReview = pinnedReview === pin ? null : pin;
+    if (pinnedReview) showRegionalReview(pin); else hideRegionalReview();
+  });
+});
+document.addEventListener('pointerdown', event => {
+  if (!event.target.closest('.review-pin,.map-review-popup')) { pinnedReview = null; hideRegionalReview(); }
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') { pinnedReview = null; hideRegionalReview(); }
+});
+const koreanClock = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+function updateKoreanClock() {
+  const now = new Date();
+  $('#nemo-local-time').textContent = koreanClock.format(now) + ' KST';
+  $('#nemo-local-time').dateTime = now.toISOString();
+}
+updateKoreanClock();
+setInterval(() => { if (!document.hidden) updateKoreanClock(); }, 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) updateKoreanClock(); });
