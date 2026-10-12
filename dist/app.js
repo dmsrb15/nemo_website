@@ -12,7 +12,7 @@ const cards = $$('.project-card');
 const cardDelays = cards.map(() => .34 + Math.random() * .07);
 const cardOffsets = cards.map(() => 45 + Math.random() * 75);
 const typeLines = ['라이프스타일부터', '브랜드의 분위기까지.'];
-function openingProgress() { return clamp(-opening.getBoundingClientRect().top / Math.max(1, opening.offsetHeight - innerHeight)) * 6; }
+function openingProgress() { return clamp(-opening.getBoundingClientRect().top / Math.max(1, opening.offsetHeight - innerHeight)) * 7.5; }
 function setSceneVisibility(section, opacity) {
   section.style.opacity = opacity;
   section.style.visibility = opacity > .001 ? 'visible' : 'hidden';
@@ -24,9 +24,9 @@ function updateStory() {
   const photo = $('.hero-photo');
   if (!reduce.matches) {
     const expand = clamp(scene / .45);
-    const shrink = clamp((scene - .75) / .6);
-    const detail = clamp((scene - 1.05) / .4);
-    const exit = clamp((scene - 1.65) / .65);
+    const shrink = clamp((scene - 1.45) / .7);
+    const detail = clamp((scene - .6) / .35);
+    const exit = clamp((scene - 2.6) / .8);
     const insetLeft = mobile ? 4 : 1.5;
     const insetTop = mobile ? 95 : 130;
     const expandedLeft = mix(insetLeft, 0, expand);
@@ -40,16 +40,30 @@ function updateStory() {
     photo.style.borderRadius = mix(0, mobile ? 30 : 65, shrink) + 'px';
     $('.scene-number').style.opacity = 1 - exit;
     photo.style.transform = `translateY(${-exit * innerHeight * 1.1}px)`;
-    $('.hero-title').style.opacity = 1 - clamp((scene - .7) / .45);
-    $('.hero-caption').style.opacity = 1 - shrink;
-    $('.estimate-copy').style.opacity = detail * (1 - clamp((scene - 1.6) / .25));
+    $('.hero-title').style.opacity = 1 - clamp((scene - .55) / .3);
+    $('.hero-caption').style.opacity = 1 - detail;
+    $('.estimate-copy').style.opacity = detail;
     $('.estimate-copy').style.transform = `translateY(${32 * (1 - detail)}px)`;
-    $('.estimate-card').style.opacity = detail * (1 - clamp((scene - 1.8) / .3));
-    $('.estimate-card').style.transform = 'none';
-    setSceneVisibility($('.hero-story'), 1 - clamp((scene - 2.1) / .3));
+    $('.estimate-card').style.opacity = detail * (1 - clamp((scene - 3.3) / .3));
+    const alignment = clamp((scene - 1.55) / .9);
+    const stage = $('.opening-stage').getBoundingClientRect();
+    const target = $('.service-visual').getBoundingClientRect();
+    const card = $('.estimate-card');
+    const startWidth = mobile ? Math.min(innerWidth * .72, 270) : 310;
+    const startHeight = 260;
+    const startLeft = innerWidth * (mobile ? .07 : .11);
+    const startTop = mobile ? innerHeight * .43 : Math.min(innerHeight * .62, innerHeight - 280);
+    card.style.right = 'auto';
+    card.style.left = mix(startLeft, target.left - stage.left, alignment) + 'px';
+    card.style.top = mix(startTop, target.top - stage.top, alignment) + 'px';
+    card.style.width = mix(startWidth, target.width, alignment) + 'px';
+    card.style.height = mix(startHeight, target.height, alignment) + 'px';
+    card.style.setProperty('--card-alignment', alignment);
+    card.style.transform = 'none';
+    setSceneVisibility($('.hero-story'), 1 - clamp((scene - 3.45) / .3));
     $$('.service-story').forEach((section, index) => {
-      const start = 1.85 + index * 2;
-      const fade = clamp((scene - start) / .3) * (index === 0 ? 1 - clamp((scene - 3.7) / .3) : 1);
+      const start = 3.35 + index * 2;
+      const fade = clamp((scene - start) / .3) * (index === 0 ? 1 - clamp((scene - 5.2) / .3) : 1);
       setSceneVisibility(section, fade);
       const lift = clamp((scene - start - .45) / .65);
       const reveal = clamp((scene - start - .9) / .4);
@@ -81,7 +95,7 @@ function updateStory() {
     card.style.transform = `translateY(${cardOffsets[index] * (1 - reveal)}px)`;
     card.inert = reveal < .05;
   });
-  let active = scene < 1.9 ? 'home' : scene < 3.85 ? 'residential' : 'commercial';
+  let active = scene < 3.4 ? 'home' : scene < 5.35 ? 'residential' : 'commercial';
   for (const id of ['portfolio', 'reviews', 'about', 'contact']) if ($('#' + id).getBoundingClientRect().top <= innerHeight * .45) active = id;
   $$('.section-rail a').forEach(link => {
     const selected = link.dataset.section === active;
@@ -99,6 +113,7 @@ function setMotionPreference() {
     $('.hero-title').style.opacity = 1;
     $('.hero-caption').style.opacity = 1;
     $('.estimate-copy').style.opacity = 0;
+    $('.estimate-card').removeAttribute('style');
     $('.estimate-card').style.opacity = 1;
     $$('.hero-story,.service-story').forEach(section => { section.removeAttribute('style'); section.inert = false; });
     $$('.service-intro,.title-tail,.chapter,.service-details').forEach(node => node.removeAttribute('style'));
@@ -111,8 +126,8 @@ reduce.addEventListener('change', setMotionPreference);
 setMotionPreference();
 
 function jumpTo(id) {
-  const scenes = { home: 0, services: 2.25, residential: 2.25, commercial: 4.25 };
-  const top = !reduce.matches && id in scenes ? opening.offsetTop + (opening.offsetHeight - innerHeight) * scenes[id] / 6 : $('#' + id).getBoundingClientRect().top + scrollY;
+  const scenes = { home: 0, services: 3.75, residential: 3.75, commercial: 5.75 };
+  const top = !reduce.matches && id in scenes ? opening.offsetTop + (opening.offsetHeight - innerHeight) * scenes[id] / 7.5 : $('#' + id).getBoundingClientRect().top + scrollY;
   scrollTo({ top, behavior: reduce.matches ? 'instant' : 'smooth' });
 }
 $$('a[href^="#"]').forEach(link => link.addEventListener('click', event => {
