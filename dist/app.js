@@ -203,14 +203,8 @@ $$('dialog').forEach(dialog => {
     if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) closeDialog(dialog);
   });
 });
-function openConsult() {
-  const openDetail = $('#detail-dialog');
-  if (openDetail.open) openDetail.close();
-  $$('input[name="space"]').forEach(input => input.checked = input.value === chosenSpace);
-  $('#form-status').textContent = '';
-  openDialog($('#consult-dialog'));
-}
-$$('.consult').forEach(button => button.addEventListener('click', openConsult));
+function openConsult() { location.href = 'inquiry.html?space=' + encodeURIComponent(chosenSpace); }
+$$('.consult').forEach(link => link.addEventListener('click', event => { event.preventDefault(); openConsult(); }));
 $$('[data-space]').forEach(button => button.addEventListener('click', () => {
   chosenSpace = button.dataset.space;
   $$('[data-space]').forEach(item => item.classList.toggle('selected', item === button));
@@ -257,20 +251,7 @@ function alignFilterPill() {
 addEventListener('resize', alignFilterPill);
 alignFilterPill();
 $$('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
-const projects = {
-  living: { title: '자연을 들이는 거실', type: '주거 / 거실', photo: true, text: '큰 창으로 들어오는 빛, 따뜻한 원목, 편안한 소파. 자연을 가까이 두고 오래 머물고 싶은 공간의 분위기를 살펴보세요.' },
-  home: { title: '취향이 머무는 집', type: '주거 / 거실', art: 'a-home', text: '둥근 소파와 노란 의자, 부드러운 소재의 조합. 당신의 취향을 담으면서 일상에 편안함을 더하는 주거 공간 콘셉트이에요.' },
-  cafe: { title: '다시 찾고 싶은 카페', type: '상업 / 카페', art: 'a-cafe', text: '따뜻한 노란 카운터와 원목 테이블, 부드러운 조명. 브랜드의 분위기와 고객이 머무는 경험을 함께 생각한 카페 콘셉트이에요.' },
-  materials: { title: '손끝으로 느끼는 취향', type: '주거 / 소재', art: 'a-material', text: '원목, 크림색 표면, 차분한 세이지 패브릭. 색과 질감이 조화롭게 이어지는 공간을 위한 소재 콘셉트이에요.' },
-  brand: { title: '분위기가 되는 디테일', type: '상업 / 빛과 소재', photo: true, text: '빛과 소재가 만드는 첫인상. 공간 사진을 통해 브랜드의 분위기에 어울리는 색감과 재료를 함께 살펴봅니다.' }
-};
-$$('[data-project]').forEach(card => card.addEventListener('click', () => {
-  const project = projects[card.dataset.project];
-  chosenSpace = card.dataset.category;
-  $('#detail-content').innerHTML = `<span class="eyebrow">${project.type}</span><h2 id="detail-title">${project.title}</h2><div class="project-detail-image">${project.photo ? '<img src="assets/hero.png" alt="스토리보드의 공간 사진 레퍼런스">' : `<div class="atlas ${project.art}" role="img" aria-label="${project.title} 입체 콘셉트"></div>`}</div><p>${project.text}</p><button class="button yellow" id="detail-consult">이런 공간 상담하기 ↗</button>`;
-  $('#detail-consult').addEventListener('click', openConsult);
-  openDialog($('#detail-dialog'));
-}));
+$$('[data-project]').forEach(card => card.addEventListener('click', () => { location.href = 'portfolio.html?project=' + encodeURIComponent(card.dataset.project); }));
 const information = {
   news: { title: '네모의 새로운 이야기', eyebrow: 'NEWSROOM', text: '공간과 디자인에 대한 이야기를 준비하고 있어요. 네모의 새로운 소식을 이곳에서 만나보세요.' },
   careers: { title: '함께 공간을 만들어갈 분들', eyebrow: 'CAREERS', text: '채용 공고는 아직 등록되지 않았어요. 네모와의 협업이나 채용 관련 문의는 아래 이메일로 연락해주세요.' },
@@ -282,15 +263,6 @@ $$('[data-info]').forEach(button => button.addEventListener('click', () => {
   $('#detail-content').innerHTML = `<span class="eyebrow">${info.eyebrow}</span><h2 id="detail-title">${info.title}</h2><p>${info.text}</p><a class="button pale" href="mailto:nemo_interior_@naver.com">이메일 문의 ↗</a>`;
   openDialog($('#detail-dialog'));
 }));
-$('#consult-form').addEventListener('submit', event => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  const body = `NEMO 인테리어 상담 요청\n\n공간 유형: ${data.get('space')}\n이름: ${data.get('name')}\n연락처: ${data.get('phone')}\n공간 위치: ${data.get('location') || '미정'}\n면적: ${data.get('area')}\n예산: ${data.get('budget')}\n\n원하는 변화:\n${data.get('message') || '상담을 통해 이야기하고 싶어요.'}`;
-  const href = `mailto:nemo_interior_@naver.com?subject=${encodeURIComponent('[NEMO] 인테리어 상담 요청')}&body=${encodeURIComponent(body)}`;
-  $('#form-status').textContent = '이메일 앱에서 초안을 확인하고 직접 보내주세요. 앱이 열리지 않으면 nemo_interior_@naver.com으로 문의해주세요.';
-  location.href = href;
-});
-
 // Fictional review content for the user-approved map preview.
 const regionalReviews = {
   seoul: { region: '서울 · 주거 공간', person: '김** 님', quote: '좋아하는 색과 소재를 하나씩 이야기했는데, 완성된 공간에 제 취향이 자연스럽게 담겼어요.' },
