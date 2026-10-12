@@ -6,40 +6,76 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 let chosenSpace = '주거';
 let scrollQueued = false;
 
+const opening = $('.opening-story');
+const portfolio = $('.portfolio');
+const cards = $$('.project-card');
+const cardDelays = cards.map(() => .19 + Math.random() * .09);
+const cardOffsets = cards.map(() => 45 + Math.random() * 75);
+const typeLines = ['라이프스타일부터', '브랜드의 분위기까지.'];
+function openingProgress() { return clamp(-opening.getBoundingClientRect().top / Math.max(1, opening.offsetHeight - innerHeight)) * 6; }
+function setSceneVisibility(section, opacity) {
+  section.style.opacity = opacity;
+  section.style.visibility = opacity > .001 ? 'visible' : 'hidden';
+  section.inert = opacity < .5;
+}
 function updateStory() {
   const mobile = innerWidth <= 760;
-  const hero = $('.hero-story');
+  const scene = openingProgress();
   const photo = $('.hero-photo');
-  const p = clamp(-hero.getBoundingClientRect().top / (hero.offsetHeight - innerHeight));
-  const shrink = clamp((p - .12) / .38);
-  const detail = clamp((p - .45) / .24);
   if (!reduce.matches) {
-    photo.style.left = mix(mobile ? 4 : 1.5, mobile ? 5 : 9.3, shrink) + '%';
-    photo.style.width = mix(mobile ? 92 : 97, mobile ? 90 : 81.4, shrink) + '%';
-    photo.style.top = mix(mobile ? 95 : 130, mobile ? 55 : 80, shrink) + 'px';
-    photo.style.height = mix(innerHeight - (mobile ? 115 : 148), innerHeight * (mobile ? .73 : .81), shrink) + 'px';
-    photo.style.borderRadius = mix(0, mobile ? 30 : 70, shrink) + 'px';
-    photo.style.maskImage = shrink > .05 ? 'url("assets/photo-mask.svg")' : 'none';
-    photo.style.maskSize = '100% 100%';
-    photo.style.maskRepeat = 'no-repeat';
-    $('.hero-title').style.opacity = 1 - clamp(p / .24);
+    const shrink = clamp((scene - .2) / .7);
+    const detail = clamp((scene - .8) / .5);
+    const exit = clamp((scene - 1.65) / .65);
+    photo.style.left = mix(mobile ? 4 : 1.5, mobile ? 6 : 9.3, shrink) + '%';
+    photo.style.width = mix(mobile ? 92 : 97, mobile ? 88 : 81.4, shrink) + '%';
+    photo.style.top = mix(mobile ? 95 : 130, mobile ? 40 : 70, shrink) + 'px';
+    photo.style.height = mix(innerHeight - (mobile ? 115 : 148), innerHeight * .82, shrink) + 'px';
+    photo.style.borderRadius = mix(0, mobile ? 30 : 65, shrink) + 'px';
+    photo.style.transform = `translateY(${-exit * innerHeight * 1.1}px)`;
+    $('.hero-title').style.opacity = 1 - clamp(scene / .5);
     $('.hero-caption').style.opacity = 1 - shrink;
-    $('.scroll-hint').style.opacity = 1 - clamp(p / .18);
     $('.estimate-copy').style.opacity = detail;
     $('.estimate-copy').style.transform = `translateY(${32 * (1 - detail)}px)`;
-    $('.estimate-card').style.opacity = detail;
-    $('.estimate-card').style.transform = `translateY(${80 * (1 - detail)}px)`;
+    $('.estimate-card').style.opacity = detail * (1 - clamp((scene - 1.8) / .3));
+    $('.estimate-card').style.transform = 'none';
+    setSceneVisibility($('.hero-story'), 1 - clamp((scene - 2.1) / .3));
+    $$('.service-story').forEach((section, index) => {
+      const start = 1.85 + index * 2;
+      const fade = clamp((scene - start) / .3) * (index === 0 ? 1 - clamp((scene - 3.7) / .3) : 1);
+      setSceneVisibility(section, fade);
+      const lift = clamp((scene - start - .45) / .65);
+      const reveal = clamp((scene - start - .9) / .4);
+      const title = $('.service-intro', section);
+      title.style.transform = `translateY(${mix(mobile ? 105 : 180, 0, lift)}px)`;
+      title.style.fontSize = mix(mobile ? 53 : Math.min(105, innerWidth * .075), mobile ? 31 : 46, lift) + 'px';
+      $('.title-tail', section).style.opacity = 1 - lift;
+      $('.title-tail', section).style.maxWidth = mix(240, 0, lift) + 'px';
+      $('.chapter', section).style.opacity = reveal;
+      $('.service-details', section).style.opacity = reveal;
+      $('.service-details', section).style.transform = `translateY(${32 * (1 - reveal)}px)`;
+    });
   }
-  $$('.service-story').forEach(section => {
-    const amount = reduce.matches ? 1 : clamp(-section.getBoundingClientRect().top / (section.offsetHeight - innerHeight));
-    const reveal = clamp((amount - .15) / .35);
-    $('.service-intro', section).style.opacity = 1 - reveal;
-    $('.service-intro', section).style.transform = `translateY(${-45 * reveal}px)`;
-    $('.service-details', section).style.opacity = reveal;
-    $('.service-details', section).style.transform = `translateY(${32 * (1 - reveal)}px)`;
+  const progress = reduce.matches ? 1 : clamp(-portfolio.getBoundingClientRect().top / Math.max(1, portfolio.offsetHeight - innerHeight));
+  const letters = Math.round(clamp(progress / .18) * typeLines.join('').length);
+  $('#typing-one').textContent = typeLines[0].slice(0, letters);
+  $('#typing-two').textContent = typeLines[1].slice(0, Math.max(0, letters - typeLines[0].length));
+  $('.typing-caret').style.opacity = progress < .2 && !reduce.matches ? 1 : 0;
+  const strip = $('.portfolio-strip');
+  const distance = Math.max(0, strip.scrollWidth - innerWidth + (mobile ? 48 : 150));
+  strip.style.transform = reduce.matches ? 'none' : `translateX(${-distance * clamp((progress - .4) / .54)}px)`;
+  cards.forEach((card, index) => {
+    const reveal = reduce.matches ? 1 : clamp((progress - cardDelays[index]) / .13);
+    card.style.opacity = reveal;
+    card.style.transform = `translateY(${cardOffsets[index] * (1 - reveal)}px)`;
+    card.inert = reveal < .05;
   });
-  const travel = document.documentElement.scrollHeight - innerHeight;
-  $('.reading-progress').style.width = (travel ? scrollY / travel * 100 : 0) + '%';
+  let active = scene < 1.9 ? 'home' : scene < 3.85 ? 'residential' : 'commercial';
+  for (const id of ['portfolio', 'reviews', 'about', 'contact']) if ($('#' + id).getBoundingClientRect().top <= innerHeight * .45) active = id;
+  $$('.section-rail a').forEach(link => {
+    const selected = link.dataset.section === active;
+    link.classList.toggle('active', selected);
+    if (selected) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
+  });
   scrollQueued = false;
 }
 function requestStory() { if (!scrollQueued) { scrollQueued = true; requestAnimationFrame(updateStory); } }
@@ -49,9 +85,10 @@ function setMotionPreference() {
     $('.hero-photo').removeAttribute('style');
     $('.hero-title').style.opacity = 1;
     $('.hero-caption').style.opacity = 1;
-    $('.scroll-hint').style.opacity = 1;
     $('.estimate-copy').style.opacity = 0;
-    $('.estimate-card').style.opacity = 0;
+    $('.estimate-card').style.opacity = 1;
+    $$('.hero-story,.service-story').forEach(section => { section.removeAttribute('style'); section.inert = false; });
+    $$('.service-intro,.title-tail,.chapter,.service-details').forEach(node => node.removeAttribute('style'));
   }
   requestStory();
 }
@@ -60,8 +97,23 @@ addEventListener('resize', requestStory);
 reduce.addEventListener('change', setMotionPreference);
 setMotionPreference();
 
-// Frame 1:61 and 1:62's opacity/32px entrance is driven by scroll progress,
-// matching the user's storyboard sequence instead of replaying on a timer.
+function jumpTo(id) {
+  const scenes = { home: 0, services: 2.25, residential: 2.25, commercial: 4.25 };
+  const top = !reduce.matches && id in scenes ? opening.offsetTop + (opening.offsetHeight - innerHeight) * scenes[id] / 6 : $('#' + id).getBoundingClientRect().top + scrollY;
+  scrollTo({ top, behavior: reduce.matches ? 'instant' : 'smooth' });
+}
+$$('a[href^="#"]').forEach(link => link.addEventListener('click', event => {
+  const id = link.getAttribute('href').slice(1);
+  if (!$('#' + id)) return;
+  event.preventDefault(); jumpTo(id); history.replaceState(null, '', '#' + id);
+}));
+if (location.hash && $(location.hash)) requestAnimationFrame(() => jumpTo(location.hash.slice(1)));
+$$('.review-track').forEach(track => { const duplicate = track.cloneNode(true); duplicate.classList.add('review-duplicate'); duplicate.setAttribute('aria-hidden', 'true'); track.parentElement.appendChild(duplicate); });
+$('.reviews-pause').addEventListener('click', event => {
+  const paused = $('.reviews').classList.toggle('paused');
+  event.currentTarget.setAttribute('aria-pressed', String(paused));
+  event.currentTarget.textContent = paused ? '흐르는 후기 다시 재생하기' : '흐르는 후기 잠시 멈추기';
+});
 function openDialog(dialog) {
   $$('.header')[0].classList.remove('menu-open');
   $('.menu-toggle').setAttribute('aria-expanded', 'false');
@@ -109,6 +161,7 @@ function setFilter(category) {
   });
   $$('.project-card').forEach(card => card.hidden = category !== '전체' && card.dataset.category !== category);
   $('.portfolio-strip').scrollLeft = 0;
+  requestStory();
 }
 $$('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
 const projects = {
