@@ -2,7 +2,7 @@
 .service-detail{--service-muted:#74766f;--service-line:#e8e8e1;--service-soft:#f7f6ef}
 .service-shell{width:min(1160px,calc(100% - 100px));margin:auto}
 .service-label{display:block;font-size:15px;font-weight:700;color:#686a62;margin-bottom:24px;letter-spacing:-.02em}
-.service-detail-intro{padding:118px 0 80px;text-align:center;background:radial-gradient(ellipse at 50% 5%,#f6f0d9 0%,#fff 72%)}
+.service-detail-intro{padding:118px 0 80px;text-align:center;background:#fff}
 .service-detail-intro h1{font-size:clamp(44px,5.6vw,76px);line-height:1.35;letter-spacing:-.06em;font-weight:750;animation:service-enter .9s both}
 .service-detail-intro p{max-width:570px;margin:32px auto 0;font-size:18px;color:var(--service-muted);line-height:1.9;animation:service-enter .9s .16s both}
 .service-detail-intro .button{margin-top:34px;font-size:13px;padding:17px 25px;animation:service-enter .9s .28s both}

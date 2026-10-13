@@ -3,7 +3,7 @@ const root=path.resolve(__dirname,'..'),file=path.join(root,'dist/residential.ht
 const data=JSON.parse(fs.readFileSync(path.join(root,'service-content.json'),'utf8'));
 const inquiry='inquiry.html?space='+encodeURIComponent('주거');
 const main=`<main id="page-main" class="service-detail residential-detail">
-<section class="res-hero res-shell" data-res-group><span class="res-label" data-res-reveal>주거 공간</span><h1 data-res-reveal>취향은 선명하게,<br>생활은 편안하게.</h1><p data-res-reveal>매일 머무는 집이, 나에게 더 잘 맞도록.<br>생활과 취향을 듣고 공간의 변화를 함께 만들어요.</p><a class="res-link" href="${inquiry}" data-res-reveal>내 집의 변화 이야기하기 <span aria-hidden="true">↗</span></a></section>
+<section class="res-hero res-shell" data-res-group><div class="res-hero-title"><span class="res-label" data-res-reveal>주거 공간</span><h1 data-res-reveal>취향은 선명하게,<br>생활은 편안하게.</h1></div><p class="res-hero-description" data-res-reveal>매일 머무는 집이, 나에게 더 잘 맞도록.<br>생활과 취향을 듣고 공간의 변화를 함께 만들어요.</p></section>
 <figure class="res-hero-image res-shell" data-res-reveal><img src="assets/services/residential-life-v2.png" width="1672" height="941" alt="자연광이 들어오는 거실 소파에서 편안하게 책을 읽는 사람" fetchpriority="high"></figure>
 <section class="res-statement res-shell" data-res-group><span class="res-label" data-res-reveal>일상에서 시작하는 설계</span><h2 data-res-reveal>보기 좋은 집을 넘어,<br>살기 좋은 나의 집으로.</h2><p data-res-reveal>쉬고, 요리하고, 함께 시간을 보내는 하루.<br>네모는 그 안에서 원하는 변화와 불편함부터 살펴봐요.<br>좋아하는 모습에 매일의 편안함을 더합니다.</p></section>
 <section class="res-chapter res-shell" data-res-group><div class="res-chapter-head"><span class="res-number" data-res-reveal>01</span><h2 data-res-reveal>집의 중심은,<br>그 안에서 보내는 하루.</h2></div><div class="res-chapter-body"><p class="res-lead" data-res-reveal>가구를 채우기 전에,<br>생활의 흐름을 먼저 생각해요.</p><p data-res-reveal>자주 머무는 자리와 움직이는 길, 사용하는 물건을 살펴봐요. 함께 사는 사람의 생활 방식에 맞춰 동선과 수납을 정리합니다.</p><div class="res-principles" data-res-group><article data-res-reveal><span>동선</span><h3>움직이는 자리에 여유를.</h3><p>가구 사이에 편하게 지날 자리를 남기고, 요리와 휴식, 작업이 자연스럽게 이어지도록 해요.</p></article><article data-res-reveal><span>수납</span><h3>쓰는 곳 가까이에.</h3><p>물건의 양과 사용하는 습관을 살펴 필요한 곳에 자리를 마련해요. 시선과 생활을 함께 정돈합니다.</p></article></div></div></section>
@@ -16,6 +16,6 @@ const main=`<main id="page-main" class="service-detail residential-detail">
 </main>`;
 let html=fs.readFileSync(file,'utf8').replace(/<main id="page-main"[\s\S]*?<\/main>/,main);
 html=html.replace(/<script src="service-detail\.js[^\"]*" defer><\/script>/g,'').replace(/<link rel="stylesheet" href="residential-detail\.css[^\"]*">/g,'').replace(/<script src="residential-detail\.js[^\"]*" defer><\/script>/g,'');
-html=html.replace('</head>','<link rel="stylesheet" href="residential-detail.css?v=20261013-residential-1"><script src="residential-detail.js?v=20261013-residential-1" defer></script></head>');
+html=html.replace('</head>','<link rel="stylesheet" href="residential-detail.css?v=20261013-services-editorial-2"><script src="residential-detail.js?v=20261013-services-editorial-2" defer></script></head>');
 fs.writeFileSync(file,html);
 console.log('Built residential lifestyle page.');
