@@ -158,7 +158,7 @@ function updateStory() {
     card.style.transform = `translateY(${cardOffsets[index] * (1 - reveal)}px)`;
     card.inert = reveal < .05;
   });
-  let active = scene < 3.4 ? 'home' : scene < 4.05 ? 'residential' : 'commercial';
+  let active = scene < 3.4 ? 'home' : 'residential';
   for (const id of ['portfolio', 'reviews', 'about', 'contact']) if ($('#' + id).getBoundingClientRect().top <= innerHeight * .45) active = id;
   $$('.section-rail a').forEach(link => {
     const selected = link.dataset.section === active;
@@ -230,6 +230,8 @@ $$('[data-space]').forEach(button => button.addEventListener('click', () => {
   art.classList.toggle('a-home', chosenSpace === '주거');
   art.classList.toggle('office-art', chosenSpace === '사무');
   art.classList.toggle('a-cafe', chosenSpace === '상업');
+  art.classList.toggle('popup-art', chosenSpace === '팝업');
+  art.setAttribute('aria-label', chosenSpace + ' 공간 입체 일러스트');
 }));
 $('.menu-toggle').addEventListener('click', () => {
   const state = $('.header').classList.toggle('menu-open');
