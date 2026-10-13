@@ -24,6 +24,32 @@ pages.styling={eyebrow:'NEMO SERVICES',title:'스타일링',body:section('스타
   pages.services.body=['residential','commercial','office','popup','branding','styling'].map(id=>section(pages[id].title,pages[id].body.match(/<p>(.*?)<\/p>/)[1])).join('');
   const dialog=document.createElement('dialog');dialog.id='nemo-info-dialog';dialog.className='shared-dialog';dialog.setAttribute('aria-labelledby','shared-dialog-title');dialog.innerHTML='<button type="button" class="shared-close" aria-label="닫기">×</button><header class="shared-dialog-heading"><span class="shared-eyebrow"></span><h2 id="shared-dialog-title"></h2></header><div class="shared-dialog-body"></div>';document.body.append(dialog);
   const header=document.querySelector('.header,.page-header');
+  // Subpages share the landing page's scroll-direction navigation behavior.
+  if(header?.classList.contains('page-header')){
+    let lastY=Math.max(0,scrollY),travel=0,queued=false;
+    function showHeader(show){
+      const hidden=!show;
+      const changed=header.classList.contains('is-scroll-hidden')!==hidden;
+      header.classList.toggle('is-scroll-hidden',hidden);
+      document.documentElement.style.setProperty('--nemo-header-offset',show?header.offsetHeight+'px':'0px');
+      if(changed)dispatchEvent(new Event('nemo:header'));
+    }
+    function updateHeader(){
+      queued=false;
+      const y=Math.max(0,scrollY),delta=y-lastY;
+      if(Math.sign(delta)!==Math.sign(travel))travel=0;
+      travel+=delta;lastY=y;
+      const occupied=!!header.querySelector(':focus-visible')||header.classList.contains('menu-open')||header.classList.contains('services-expanded');
+      if(y<120||occupied){showHeader(true);travel=0;}
+      else if(travel>12){showHeader(false);travel=0;}
+      else if(travel<-8){showHeader(true);travel=0;}
+    }
+    addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(updateHeader);}},{passive:true});
+    addEventListener('resize',()=>showHeader(!header.classList.contains('is-scroll-hidden')));
+    header.addEventListener('focusin',()=>showHeader(true));
+    header.addEventListener('pointerenter',()=>showHeader(true));
+    showHeader(true);
+  }
   const trigger=header?.querySelector('[data-info="services"]');
   if(document.body.dataset.page==='service')trigger?.setAttribute('aria-current','page');
   if(document.body.dataset.page==='about')header?.querySelector('a[href="about.html"]')?.setAttribute('aria-current','page');
