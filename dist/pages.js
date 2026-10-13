@@ -87,6 +87,9 @@
     if(['주거','상업','사무','팝업'].includes(space))$$('[name="space"]',form).forEach(x=>x.checked=x.value===space);
     function updateExtras(){const type=$('[name="space"]:checked',form)?.value||'주거';const showBrand=['상업','사무','팝업'].includes(type);$('#branding-option').hidden=!showBrand;$('[name="branding"]',form).disabled=!showBrand;if(!showBrand)$('[name="branding"]',form).checked=false;$('#extras-help').textContent=type==='주거'?'가구·조명·소품으로 분위기를 바꾸고 싶다면 스타일링을 선택해주세요. 선택하지 않아도 괜찮아요.':type==='사무'?'팀의 분위기를 담는 브랜딩과 가구·조명 스타일링이 필요하면 선택해주세요. 선택하지 않아도 괜찮아요.':'브랜드의 방향과 공간의 분위기도 함께 이야기하고 싶다면 선택해주세요. 선택하지 않아도 괜찮아요.';}
     $$('[name="space"]',form).forEach(input=>input.addEventListener('change',updateExtras));updateExtras();
+    const extra=params.get('extra');
+    if(extra==='브랜딩'&&!$('[name="branding"]',form).disabled)$('[name="branding"]',form).checked=true;
+    if(extra==='스타일링')$('[name="styling"]',form).checked=true;
     const project=content.projects.find(p=>p.id===params.get('project'));
     if(project)$('[name="message"]',form).value=project.title+' 같은 분위기의 공간을 이야기하고 싶어요.';
     function values(){const d=new FormData(form);d.set('additionalServices',[d.get('branding'),d.get('styling')].filter(Boolean).join(', ')||'선택 안 함');if(d.has('areaCustom'))d.set('area',d.get('areaCustom')+' '+d.get('areaUnit'));if(d.has('budgetCustom'))d.set('budget',Number(d.get('budgetCustom')).toLocaleString('ko-KR')+'만 원');if(d.get('addressDetail'))d.set('location',d.get('location')+' '+d.get('addressDetail'));return d;}
