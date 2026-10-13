@@ -1,0 +1,33 @@
+body[data-service="residential"]{background:#fff}
+.residential-detail{--res-muted:#777b80;color:#202124;background:#fff}
+.res-shell{width:min(1120px,calc(100% - 96px));margin-inline:auto}
+.residential-detail h1,.residential-detail h2,.residential-detail h3,.residential-detail p{margin:0;word-break:keep-all;overflow-wrap:break-word}
+.res-label{display:block;font-size:16px;font-weight:650;color:#666b70;letter-spacing:-.02em}
+.res-hero{text-align:center;padding:150px 0 96px}
+.res-hero h1{font-size:clamp(45px,5.5vw,76px);line-height:1.32;letter-spacing:-.065em;font-weight:750;margin-top:26px}
+.res-hero p{font-size:19px;line-height:1.9;color:var(--res-muted);margin-top:32px}
+.res-link{display:inline-flex;align-items:center;gap:28px;font-size:15px;font-weight:650;line-height:1.6;margin-top:32px;padding:8px 0}
+.res-link span{transition:transform .25s}.res-link:hover span{transform:translate(3px,-3px)}
+.res-link:focus-visible,.res-faq summary:focus-visible{outline:2px solid #333;outline-offset:6px}
+.res-hero-image{overflow:hidden;border-radius:28px;aspect-ratio:16/9;margin-block:0}
+.res-hero-image img{display:block;width:100%;height:100%;object-fit:cover}
+.res-statement{text-align:center;min-height:85svh;display:flex;flex-direction:column;justify-content:center;padding-block:140px;max-width:900px}
+.residential-detail h2{font-size:clamp(34px,4.1vw,56px);line-height:1.42;letter-spacing:-.055em;font-weight:700}
+.res-statement h2{margin-top:30px}.res-statement p{margin-top:36px;font-size:19px;line-height:2;color:var(--res-muted)}
+.res-number{display:block;color:#81858b;font-size:15px;font-weight:600;margin-bottom:30px}
+.res-chapter{display:grid;grid-template-columns:1fr 1fr;gap:95px;padding:110px 0 180px}
+.res-chapter-body{padding-top:49px}.residential-detail .res-lead{font-size:28px;line-height:1.6;letter-spacing:-.035em;font-weight:600;color:#303338}
+.res-chapter-body>p+ p{margin-top:28px;font-size:18px;line-height:1.95;color:var(--res-muted)}
+.res-principles{margin-top:55px;display:grid;gap:36px}.res-principles article{border-top:1px solid #e9ebed;padding-top:25px}.res-principles article>span{font-size:13px;color:#878c91}
+.residential-detail h3{font-size:24px;font-weight:650;line-height:1.6;letter-spacing:-.035em}.res-principles h3{margin-top:10px}.res-principles p{margin-top:14px;font-size:16px;line-height:1.95;color:var(--res-muted)}
+.res-material-section{background:#f7f8f9;padding:150px 0}.res-material-layout{display:grid;grid-template-columns:1.15fr 1fr;gap:100px;align-items:start}.res-material-layout>div>p{font-size:18px;line-height:1.95;color:var(--res-muted);margin-top:32px}
+.res-material-notes{display:grid;gap:48px;padding-top:55px}.res-material-notes p{font-size:17px;line-height:1.95;color:var(--res-muted);margin-top:17px}
+.res-consult{display:grid;grid-template-columns:1fr 1fr;gap:85px;align-items:center;padding-block:180px}.res-consult figure{margin:0;border-radius:28px;overflow:hidden;aspect-ratio:1}.res-consult img{display:block;width:100%;height:100%;object-fit:cover}.res-consult-copy p{font-size:18px;line-height:1.95;color:var(--res-muted);margin-top:30px}
+.res-process{padding:50px 0 150px}.res-process h2{margin-top:25px}.res-process ol{list-style:none;padding:0;margin:70px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:55px}.res-process li{border-top:1px solid #e9ebed;padding-top:28px}.res-process li>span{display:block;font-size:13px;color:#8b9095;margin-bottom:25px}.res-process li p{margin-top:20px;font-size:17px;line-height:1.95;color:var(--res-muted)}
+.res-faq{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;padding:90px 0 170px}.res-faq h2{font-size:36px}.res-faq details{border-bottom:1px solid #e9ebed}.res-faq details:first-child{border-top:1px solid #e9ebed}.res-faq summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 0;font-size:18px;font-weight:550;line-height:1.7;word-break:keep-all}.res-faq summary::-webkit-details-marker{display:none}.res-faq summary span{font-size:25px;font-weight:400;transition:transform .25s}.res-faq details[open] summary span{transform:rotate(45deg)}.res-faq details>p{padding:0 30px 28px 0;font-size:16px;line-height:1.95;color:var(--res-muted)}
+.res-ending{background:#f7f8f9;text-align:center;padding:135px 0}.res-ending h2{margin-top:30px}.res-ending p{font-size:18px;line-height:1.95;color:var(--res-muted);margin-top:28px}.res-ending .button{margin:35px auto 0;padding:18px 26px;font-size:15px}.res-ending .res-link{display:flex;justify-content:center;width:fit-content;margin:22px auto 0}.residential-detail .service-other{border:0;padding:55px 0 65px}
+.residential-detail .res-reveal-ready{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform 1s cubic-bezier(.22,1,.36,1);transition-delay:var(--res-delay,0ms)}
+.residential-detail .res-reveal-ready.is-visible{opacity:1;transform:translateY(0)}
+@media(max-width:900px){.res-shell{width:calc(100% - 56px)}.res-chapter,.res-material-layout,.res-consult,.res-faq{gap:45px}.res-process ol{gap:28px}.res-consult{padding-block:130px}}
+@media(max-width:680px){.res-shell{width:calc(100% - 40px)}.res-hero{padding:110px 0 55px}.res-hero h1{font-size:43px}.res-hero p{font-size:16px;margin-top:26px}.res-label{font-size:14px}.res-hero-image{aspect-ratio:4/3;border-radius:20px}.res-hero-image img{object-position:65% center}.res-statement{min-height:75svh;padding-block:95px}.res-statement p{font-size:16px}.res-statement p br{display:none}.residential-detail h2{font-size:34px}.res-chapter,.res-material-layout,.res-consult,.res-faq{grid-template-columns:1fr;gap:42px}.res-chapter{padding:40px 0 100px}.res-chapter-body{padding:0}.residential-detail .res-lead{font-size:24px}.res-chapter-body>p+ p,.res-material-layout>div>p,.res-consult-copy p{font-size:16px}.res-material-section{padding:95px 0}.res-material-notes{padding:0;gap:32px}.res-material-notes p{font-size:16px}.res-consult{padding-block:100px}.res-process{padding:20px 0 85px}.res-process ol{grid-template-columns:1fr;gap:38px;margin-top:45px}.res-process li>span{margin-bottom:15px}.res-process li p{font-size:16px;margin-top:12px}.res-faq{padding:40px 0 90px;gap:32px}.res-faq summary{font-size:16px}.res-ending{padding:95px 0}.res-ending p{font-size:16px}.residential-detail .service-other>div{gap:25px}.residential-detail .service-other{padding:40px 0}}
+@media(prefers-reduced-motion:reduce){.residential-detail .res-reveal-ready{opacity:1;transform:none;transition:none}.res-link span,.res-faq summary span{transition:none}}

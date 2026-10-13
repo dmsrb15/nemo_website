@@ -10,6 +10,7 @@ const copy={
  styling:{intro:'큰 공사 없이도,<br>일상의 분위기는 달라져요.',focus:'가구와 빛, 질감을<br>취향에 맞게 조합해요.',checks:['현재 공간과 가구의 사진','계속 사용할 가구의 크기','좋아하는 분위기와 필요한 변화']}
 };
 for(const [id,s] of Object.entries(data)){
+ if(id==='residential'){require('./build-residential.cjs');continue;}
  const file=path.join(dist,id+'.html');let html=fs.readFileSync(file,'utf8');const c=copy[id];
  const inquiry=id==='branding'?'inquiry.html?space='+encodeURIComponent('상업')+'&extra='+encodeURIComponent('브랜딩'):id==='styling'?'inquiry.html?space='+encodeURIComponent('주거')+'&extra='+encodeURIComponent('스타일링'):'inquiry.html?space='+encodeURIComponent(s.space),portfolio='portfolios.html?space='+encodeURIComponent(s.space);
  const main=`<main id="page-main" class="service-detail">
