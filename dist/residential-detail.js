@@ -10,5 +10,15 @@
   nodes.forEach(n=>observer.observe(n));
  }
  configure();motion.addEventListener('change',configure);
+ const stage=root.querySelector('.res-process-stage');
+ if(stage){
+  const title=stage.querySelector('.res-process-title'),cards=[...stage.querySelectorAll('[data-process-card]')];let queued=false;
+  function renderStage(){queued=false;const rect=stage.getBoundingClientRect(),travel=Math.max(1,stage.offsetHeight-innerHeight),progress=Math.max(0,Math.min(1,-rect.top/travel));
+   title.classList.toggle('stage-visible',motion.matches||rect.top<=2);
+   cards.forEach((card,i)=>card.classList.toggle('stage-visible',motion.matches||progress>=[.12,.36,.6][i]));
+  }
+  function requestStage(){if(!queued){queued=true;requestAnimationFrame(renderStage);}}
+  stage.classList.add('stage-motion-ready');addEventListener('scroll',requestStage,{passive:true});addEventListener('resize',requestStage);motion.addEventListener('change',requestStage);renderStage();
+ }
  root.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open&&!motion.matches)d.querySelector('p').animate([{opacity:0},{opacity:1}],{duration:250});}));
 })();
