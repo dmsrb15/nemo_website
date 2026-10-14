@@ -1,16 +1,17 @@
-import http from 'node:http';
-import fs from 'node:fs';
-import path from 'node:path';
-const root = path.resolve('dist');
-const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
-http.createServer((req, res) => {
-  let requested;
-  try { requested = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); } catch { res.writeHead(400).end(); return; }
-  const file = path.resolve(root, '.' + (requested === '/' ? '/index.html' : requested));
-  if (!file.startsWith(root + path.sep)) { res.writeHead(403).end(); return; }
-  fs.readFile(file, (error, content) => {
-    if (error) { res.writeHead(404).end('Not found'); return; }
-    res.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
-    res.end(content);
-  });
-}).listen(4317, '127.0.0.1', () => console.log('Local: http://127.0.0.1:4317'));
+// Local-only preview. Identity injection and cookie translation are never bundled in production.
+import {Miniflare} from 'miniflare';import fs from 'node:fs/promises';import path from 'node:path';import http from 'node:http';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';
+execFileSync(process.execPath,['scripts/build-cms.cjs'],{stdio:'inherit'});
+const root=path.resolve('dist/client'),ownerEmail='owner@sites.test',ownerId='local_owner';
+await fs.mkdir('.wrangler/cms',{recursive:true});let secrets;try{secrets=JSON.parse(await fs.readFile('.wrangler/cms/local-secrets.json','utf8'));}catch{secrets={pepper:crypto.randomBytes(32).toString('base64url')};await fs.writeFile('.wrangler/cms/local-secrets.json',JSON.stringify(secrets));}
+const mime={'.html':'text/html;charset=utf-8','.js':'application/javascript;charset=utf-8','.css':'text/css;charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml'};
+const mf=new Miniflare({modules:true,scriptPath:'dist/server/index.js',compatibilityDate:'2026-05-22',d1Databases:['DB'],r2Buckets:['BUCKET'],d1Persist:'.wrangler/cms/d1',r2Persist:'.wrangler/cms/r2',bindings:{CMS_PASSWORD_PEPPER:secrets.pepper,CMS_SETUP_OWNER_EMAIL:ownerEmail},serviceBindings:{ASSETS:async request=>{const file=path.resolve(root,'.'+decodeURIComponent(new URL(request.url).pathname));if(path.relative(root,file).startsWith('..'))return new Response('Forbidden',{status:403});try{return new Response(await fs.readFile(file),{headers:{'Content-Type':mime[path.extname(file)]||'application/octet-stream'}});}catch{return new Response('Not found',{status:404});}}}});
+const db=await mf.getD1Database('DB');await db.prepare('CREATE TABLE IF NOT EXISTS local_cms_migrations (name TEXT PRIMARY KEY,hash TEXT NOT NULL)').run();
+for(const file of(await fs.readdir('drizzle')).filter(n=>n.endsWith('.sql'))){const sql=await fs.readFile(path.join('drizzle',file),'utf8'),hash=crypto.createHash('sha256').update(sql).digest('hex'),applied=await db.prepare('SELECT hash FROM local_cms_migrations WHERE name=?').bind(file).first();if(applied){if(applied.hash!==hash)throw Error('An applied migration was changed: '+file);continue;}await db.batch([...sql.split('--> statement-breakpoint').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)),db.prepare('INSERT INTO local_cms_migrations (name,hash) VALUES (?,?)').bind(file,hash)]);}
+const server=http.createServer(async(incoming,outgoing)=>{
+ try{const chunks=[];for await(const chunk of incoming)chunks.push(chunk);const headers=new Headers(incoming.headers);headers.set('oai-authenticated-user-email',ownerEmail);headers.set('oai-authenticated-user-id',ownerId);if(headers.has('cookie'))headers.set('cookie',headers.get('cookie').replace(/nemo_admin_preview=/g,'__Host-nemo_admin='));
+ const response=await mf.dispatchFetch('http://127.0.0.1:4317'+incoming.url,{method:incoming.method,headers,...(['GET','HEAD'].includes(incoming.method)?{}:{body:Buffer.concat(chunks)})});outgoing.statusCode=response.status;
+ for(const [key,value]of response.headers){if(key==='set-cookie')outgoing.setHeader(key,value.replace('__Host-nemo_admin=','nemo_admin_preview=').replace('; Secure',''));else outgoing.setHeader(key,value);}outgoing.end(Buffer.from(await response.arrayBuffer()));
+ }catch(error){outgoing.statusCode=500;outgoing.end(error.message);}
+});
+server.listen(4317,'127.0.0.1',()=>console.log('Local: http://127.0.0.1:4317/admin'));
+process.on('SIGINT',async()=>{server.close();await mf.dispose();process.exit(0);});

@@ -1,0 +1,17 @@
+{
+  "name": "nemo-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-cms.cjs",
+    "db:generate": "drizzle-kit generate",
+    "test": "node --test tests/cms.test.mjs",
+    "dev": "node server.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12",
+    "drizzle-kit": "0.31.10",
+    "drizzle-orm": "0.45.2",
+    "wrangler": "4.92.0"
+  }
+}

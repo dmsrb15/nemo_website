@@ -3,3 +3,10 @@ node_modules/
 *.tar.gz
 qa-*.png
 .tools/
+dist/client/
+dist/server/
+dist/.openai/
+.wrangler/
+.dev.vars
+.env*
+!.env.example
