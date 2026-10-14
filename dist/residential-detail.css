@@ -35,4 +35,11 @@ body[data-service="residential"]{background:#fff}
 @media(max-width:900px){.res-hero{gap:40px;grid-template-columns:1.2fr 1fr}.res-hero h1{font-size:42px}.res-hero p{font-size:15px}.res-hero p br{display:none}}
 @media(max-width:680px){.res-hero{display:block;text-align:left;padding:80px 0 34px}.res-hero h1{font-size:36px;line-height:1.4;margin-top:20px}.res-hero p{font-size:16px;margin-top:26px;max-width:100%}.res-hero p br{display:block}.service-principles{margin-top:0}.service-process{padding-top:95px}}
 @media(max-width:680px){body[data-service="commercial"] .res-hero-image img,body[data-service="styling"] .res-hero-image img{object-position:30% center}body[data-service="branding"] .res-hero-image img,body[data-service="popup"] .res-hero-image img{object-position:45% center}}
-@media(prefers-reduced-motion:reduce){.residential-detail .res-reveal-ready{opacity:1;transform:none;transition:none}.res-link span,.res-faq summary span{transition:none}}
+body[data-service="residential"] .res-life-chapter{padding-bottom:70px;row-gap:75px}
+body[data-service="residential"] .res-life-photo{grid-column:1/-1;margin:0;border-radius:28px;overflow:hidden;aspect-ratio:2/1}
+body[data-service="residential"] .res-life-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 55%}
+body[data-service="residential"] [data-res-photo] img{transform:scale(1.035);transition:transform 1.35s cubic-bezier(.22,1,.36,1)}
+body[data-service="residential"] [data-res-photo].is-visible img{transform:scale(1)}
+body[data-service="residential"] .res-consult{padding-top:125px}
+@media(max-width:680px){body[data-service="residential"] .res-life-chapter{row-gap:35px;padding-bottom:20px}body[data-service="residential"] .res-life-photo{aspect-ratio:4/3;border-radius:20px}body[data-service="residential"] .res-chapter-body p br{display:none}body[data-service="residential"] .res-consult{padding-top:90px}}
+@media(prefers-reduced-motion:reduce){.residential-detail .res-reveal-ready{opacity:1;transform:none;transition:none}.res-link span,.res-faq summary span{transition:none}body[data-service="residential"] [data-res-photo] img{transform:none;transition:none}}
