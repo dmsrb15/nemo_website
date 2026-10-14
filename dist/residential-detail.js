@@ -15,7 +15,7 @@
   const title=stage.querySelector('.res-process-title'),cards=[...stage.querySelectorAll('[data-process-card]')];let queued=false;
   function renderStage(){queued=false;const rect=stage.getBoundingClientRect(),travel=Math.max(1,stage.offsetHeight-innerHeight),progress=Math.max(0,Math.min(1,-rect.top/travel));
    title.classList.toggle('stage-visible',motion.matches||rect.top<=2);
-   cards.forEach((card,i)=>card.classList.toggle('stage-visible',motion.matches||progress>=[.12,.36,.6][i]));
+   cards.forEach((card,i)=>card.classList.toggle('stage-visible',motion.matches||progress>=.12+i*(.54/Math.max(1,cards.length-1))));
   }
   function requestStage(){if(!queued){queued=true;requestAnimationFrame(renderStage);}}
   stage.classList.add('stage-motion-ready');addEventListener('scroll',requestStage,{passive:true});addEventListener('resize',requestStage);motion.addEventListener('change',requestStage);renderStage();
