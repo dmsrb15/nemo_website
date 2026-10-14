@@ -20,3 +20,6 @@ body[data-page="portfolios"] .portfolio-grid{display:flex;flex-wrap:wrap;gap:34p
 /* Square illustration cells must fit within their thumbnail without cropping. */
 body[data-page="portfolios"] .portfolio-cover:has(.cms-sprite){aspect-ratio:1}
 body[data-page="portfolios"] .portfolio-cover .cms-sprite{width:min(100%,420px);max-height:none;flex-shrink:0}
+
+body[data-page="portfolios"] .portfolio-cover{background:#f3f4f1;border:1px solid #e5e8e2;border-radius:20px;box-sizing:border-box}
+body[data-page="portfolios"] .portfolio-cover:has(.cms-sprite){padding:16px}
