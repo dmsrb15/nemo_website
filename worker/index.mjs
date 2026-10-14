@@ -15,7 +15,15 @@ async function passwordHash(password,salt,pepper){
 const equal=(a,b)=>{if(typeof a!=='string'||typeof b!=='string')return false;let diff=a.length^b.length;for(let i=0;i<Math.max(a.length,b.length);i++)diff|=(a.charCodeAt(i)||0)^(b.charCodeAt(i)||0);return diff===0;};
 const cookie=(token,expires=43200)=>COOKIE+'='+token+'; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age='+expires;
 const adminRow=env=>env.DB.prepare('SELECT * FROM cms_admin WHERE id=?').bind('owner').first();
-const isOwner=(request,env,admin)=>!!request.headers.get('oai-authenticated-user-id')&&request.headers.get('oai-authenticated-user-email')?.toLowerCase()===env.CMS_SETUP_OWNER_EMAIL?.toLowerCase()&&(!admin||admin.platform_id===request.headers.get('oai-authenticated-user-id'));
+async function ensureBootstrap(env){
+ const version='username-initial-v1';
+ if(await env.DB.prepare('SELECT value FROM cms_settings WHERE key=?').bind(version).first())return;
+ if(!/^[a-z0-9][a-z0-9._-]{1,63}$/.test(env.CMS_INITIAL_USERNAME||'')||!/^[A-Za-z0-9_-]{43}$/.test(env.CMS_INITIAL_PASSWORD_HASH||'')||!/^[A-Za-z0-9_-]{43}$/.test(env.CMS_INITIAL_PASSWORD_SALT||''))fail(503,'관리자 계정을 준비 중입니다. 잠시 후 다시 접속해주세요.');
+ const existed=await adminRow(env),now=Date.now();
+ const statements=[env.DB.prepare('DELETE FROM cms_sessions WHERE NOT EXISTS (SELECT 1 FROM cms_settings WHERE key=?)').bind(version),env.DB.prepare('INSERT INTO cms_admin (id,email,username,password,salt,platform_id) SELECT ?,?,?,?,?,? WHERE NOT EXISTS (SELECT 1 FROM cms_settings WHERE key=?) ON CONFLICT(id) DO UPDATE SET username=excluded.username,password=excluded.password,salt=excluded.salt').bind('owner',env.CMS_SETUP_OWNER_EMAIL,env.CMS_INITIAL_USERNAME,env.CMS_INITIAL_PASSWORD_HASH,env.CMS_INITIAL_PASSWORD_SALT,'',version)];
+ if(!existed){const seed=[...legacy.projects.map(p=>['portfolio',p]),...legacy.stories.map(p=>['news',p])];for(const [i,[type,p]]of seed.entries())statements.push(env.DB.prepare('INSERT OR IGNORE INTO cms_posts (id,type,status,title,payload,published,created,updated) SELECT ?,?,?,?,?,?,?,? WHERE NOT EXISTS (SELECT 1 FROM cms_settings WHERE key=?)').bind(type+':'+p.id,type,'published',p.title,JSON.stringify(p),JSON.stringify(p),now-i,now-i,version));}
+ statements.push(env.DB.prepare('INSERT OR IGNORE INTO cms_settings (key,value) VALUES (?,?)').bind(version,String(now)));await env.DB.batch(statements);
+}
 async function authenticated(request,env){
  const token=request.headers.get('cookie')?.split(';').map(s=>s.trim()).find(s=>s.startsWith(COOKIE+'='))?.slice(COOKIE.length+1);
  if(!token||!/^[A-Za-z0-9_-]{43}$/.test(token))return false;
@@ -32,7 +40,7 @@ async function readJSON(request){
  try{const parsed=JSON.parse(raw);if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))fail(400,'입력 내용을 확인해주세요.');return parsed;}catch{fail(400,'입력 내용을 확인해주세요.');}
 }
 async function readBytes(request,limit){const reader=request.body?.getReader();if(!reader)return new Uint8Array();let length=0,chunks=[];while(true){const {value,done}=await reader.read();if(done)break;length+=value.length;if(length>limit){await reader.cancel();fail(413,'파일 또는 글이 너무 큽니다.');}chunks.push(value);}const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}return bytes;}
-function credentials(body){const email=String(body.email||'').trim().toLowerCase(),password=String(body.password||'');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||password.length<12||password.length>128)fail(400,'이메일과 12~128자의 비밀번호를 입력해주세요.');return {email,password};}
+function credentials(body){const username=String(body.username||'').trim().toLowerCase(),password=String(body.password||'');if(!/^[a-z0-9][a-z0-9._-]{1,63}$/.test(username)||!password.length||password.length>128)fail(400,'아이디와 비밀번호를 입력해주세요.');return {username,password};}
 async function createSession(env){
  const token=random();await env.DB.batch([env.DB.prepare('DELETE FROM cms_sessions WHERE expires<?').bind(Date.now()),env.DB.prepare('INSERT INTO cms_sessions (token,expires) VALUES (?,?)').bind(await digest(token),Date.now()+TTL)]);
  return token;
@@ -75,23 +83,14 @@ export default {async fetch(request,env){
    if(!env.DB||!env.BUCKET||!env.CMS_PASSWORD_PEPPER||!env.CMS_SETUP_OWNER_EMAIL)fail(503,'관리자 저장소를 준비 중입니다. 잠시 후 다시 접속해주세요.');
   }
   if(path.startsWith('/api/')&&request.method!=='GET'&&request.method!=='HEAD')sameOrigin(request,env);
-  if(path==='/api/admin/session'&&request.method==='GET'){const admin=await adminRow(env),signed=await authenticated(request,env);return json({configured:!!admin,authenticated:signed,email:signed?admin.email:undefined,canSetup:!admin&&isOwner(request,env),canRecover:!!admin&&isOwner(request,env,admin)});}
-  if(path==='/api/admin/setup'&&request.method==='POST'){
-   if(await adminRow(env))fail(409,'관리자 계정이 이미 등록되어 있습니다.');if(!isOwner(request,env))fail(403,'사이트 소유자만 최초 관리자 계정을 등록할 수 있습니다.');
-   const {email,password}=credentials(await readJSON(request)),salt=random(),hash=await passwordHash(password,salt,env.CMS_PASSWORD_PEPPER),now=Date.now();
-   const seed=[...legacy.projects.map(p=>['portfolio',p]),...legacy.stories.map(p=>['news',p])];
-   try{await env.DB.batch([env.DB.prepare('INSERT INTO cms_admin (id,email,password,salt,platform_id) VALUES (?,?,?,?,?)').bind('owner',email,hash,salt,request.headers.get('oai-authenticated-user-id')),...seed.map(([type,p],i)=>env.DB.prepare('INSERT INTO cms_posts (id,type,status,title,payload,published,created,updated) VALUES (?,?,?,?,?,?,?,?)').bind(type+':'+p.id,type,'published',p.title,JSON.stringify(p),JSON.stringify(p),now-i,now-i))]);}catch(error){if(await adminRow(env))fail(409,'관리자 계정이 이미 등록되어 있습니다.');throw error;}
-   return json({ok:true},201,{'Set-Cookie':cookie(await createSession(env))});
-  }
+  if(path==='/api/admin/session'||path==='/api/admin/login')await ensureBootstrap(env);
+  if(path==='/api/admin/session'&&request.method==='GET'){const admin=await adminRow(env),signed=await authenticated(request,env);return json({configured:!!admin,authenticated:signed,username:signed?admin.username:undefined,registrationAvailable:false});}
+  if(['/api/admin/setup','/api/admin/recover','/api/admin/register','/api/admin/request-code'].includes(path))fail(403,'추가 계정 등록과 이메일 인증은 아직 제공하지 않습니다.');
   if(path==='/api/admin/login'&&request.method==='POST'){
-   const key=await rateLimit(request,env),{email,password}=credentials(await readJSON(request)),admin=await adminRow(env);
+   const key=await rateLimit(request,env),{username,password}=credentials(await readJSON(request)),admin=await adminRow(env);
    const hash=await passwordHash(password,admin?.salt||'not-configured',env.CMS_PASSWORD_PEPPER);
-   if(!admin||!equal(hash,admin.password)||!equal(email,admin.email))fail(401,'이메일 또는 비밀번호가 맞지 않습니다.');
+   if(!admin||!equal(hash,admin.password)||!equal(username,admin.username))fail(401,'아이디 또는 비밀번호가 맞지 않습니다.');
    await env.DB.prepare('DELETE FROM cms_attempts WHERE key=?').bind(key).run();return json({ok:true},200,{'Set-Cookie':cookie(await createSession(env))});
-  }
-  if(path==='/api/admin/recover'&&request.method==='POST'){
-   const admin=await adminRow(env);if(!admin||!isOwner(request,env,admin))fail(403,'사이트 소유자 계정으로 접속해주세요.');
-   const {email,password}=credentials(await readJSON(request)),salt=random();await env.DB.batch([env.DB.prepare('UPDATE cms_admin SET email=?,password=?,salt=? WHERE id=?').bind(email,await passwordHash(password,salt,env.CMS_PASSWORD_PEPPER),salt,'owner'),env.DB.prepare('DELETE FROM cms_sessions')]);return json({ok:true},200,{'Set-Cookie':cookie(await createSession(env))});
   }
   if(path==='/api/admin/logout'&&request.method==='POST'){const token=request.headers.get('cookie')?.split(';').map(s=>s.trim()).find(s=>s.startsWith(COOKIE+'='))?.slice(COOKIE.length+1);if(token)await env.DB.prepare('DELETE FROM cms_sessions WHERE token=?').bind(await digest(token)).run();return json({ok:true},200,{'Set-Cookie':cookie('',0)});}
   if(path==='/api/admin/posts'&&request.method==='GET'){await requireAdmin(request,env);const rows=await env.DB.prepare('SELECT * FROM cms_posts ORDER BY updated DESC').all();return json({posts:rows.results.map(p=>({...p,payload:JSON.parse(p.payload),published:undefined,hasUnpublishedChanges:p.status==='published'&&p.payload!==p.published}))});}
