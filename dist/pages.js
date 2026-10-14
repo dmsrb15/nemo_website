@@ -13,11 +13,9 @@
     dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))dialog.close();});
   });
   if(mode==='newsroom'){
-    $$('[data-news-filter]').forEach(button=>button.addEventListener('click',()=>{
-      $$('[data-news-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
-      $$('.news-grid .news-card').forEach(card=>card.hidden=button.dataset.newsFilter!=='전체'&&card.dataset.newsCategory!==button.dataset.newsFilter);
-      $('#news-count').textContent=$$('.news-grid .news-card').filter(c=>!c.hidden).length+'개의 이야기';
-    }));
+    let filter='전체',page=1;const nav=document.createElement('nav');nav.className='cms-pagination';nav.setAttribute('aria-label','뉴스룸 목록 페이지');$('.news-grid').after(nav);
+    function newsRender(){const matches=$$('.news-grid .news-card').filter(c=>filter==='전체'||c.dataset.newsCategory===filter),pages=Math.max(1,Math.ceil(matches.length/9));page=Math.min(page,pages);$$('.news-grid .news-card').forEach(c=>c.hidden=true);matches.slice((page-1)*9,page*9).forEach(c=>c.hidden=false);$('#news-count').textContent=matches.length+'개의 이야기';nav.innerHTML=pages>1?Array.from({length:pages},(_,i)=>'<button type="button" data-page="'+(i+1)+'" aria-current="'+(page===i+1?'page':'false')+'">'+(i+1)+'</button>').join(''):'';}
+    $$('[data-news-filter]').forEach(button=>button.addEventListener('click',()=>{filter=button.dataset.newsFilter;page=1;$$('[data-news-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));newsRender();}));nav.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b){page=Number(b.dataset.page);newsRender();$('.news-grid').scrollIntoView({block:'start'});}});newsRender();
   }
   if(mode==='portfolios'){
     const tools=$('.portfolio-tools');
@@ -30,10 +28,12 @@
     let category=['전체','주거','상업','사무','팝업','브랜딩','스타일링'].includes(params.get('space'))?params.get('space'):'전체';
     let style=['전체',...(window.NEMO_RAW||content).projects.map(p=>p.style)].includes(params.get('style'))?params.get('style'):'전체';
     $('#portfolio-search').value=params.get('q')||'';
-    function render(){
+    let page=1;const pageNav=document.createElement('nav');pageNav.className='cms-pagination';pageNav.setAttribute('aria-label','포트폴리오 목록 페이지');$('.portfolio-grid').after(pageNav);
+    function render(reset=true){if(reset)page=1;
       const query=$('#portfolio-search').value.trim().toLocaleLowerCase();
       let count=0;
       $$('.portfolio-item').forEach(card=>{card.hidden=(category!=='전체'&&card.dataset.category!==category)||(style!=='전체'&&card.dataset.style!==style)||!card.dataset.search.toLocaleLowerCase().includes(query);if(!card.hidden)count++;});
+      const matches=$$('.portfolio-item').filter(c=>!c.hidden),pages=Math.max(1,Math.ceil(matches.length/9));page=Math.min(page,pages);matches.forEach((c,i)=>c.hidden=i<(page-1)*9||i>=page*9);pageNav.innerHTML=pages>1?Array.from({length:pages},(_,i)=>'<button type="button" data-page="'+(i+1)+'" aria-current="'+(page===i+1?'page':'false')+'">'+(i+1)+'</button>').join(''):'';
       $('#portfolio-count').textContent=count+'개의 공간';$('.portfolio-empty').hidden=count!==0;
       $('#search-clear').hidden=!query;
       $$('[data-project-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.projectFilter===category)));
@@ -41,6 +41,7 @@
       const next=new URLSearchParams();if(category!=='전체')next.set('space',category);if(style!=='전체')next.set('style',style);if(query)next.set('q',$('#portfolio-search').value.trim());
       history.replaceState(null,'',location.pathname+(next.size?'?'+next:''));
     }
+    pageNav.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b){page=Number(b.dataset.page);render(false);$('.portfolio-grid').scrollIntoView({block:'start'});}});
     function reset(){category='전체';style='전체';$('#portfolio-search').value='';render();}
     $$('[data-project-filter]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.projectFilter;render();}));
     $$('[data-style-filter]').forEach(b=>b.addEventListener('click',()=>{style=b.dataset.styleFilter;render();}));
@@ -48,7 +49,7 @@
     $('#search-clear').addEventListener('click',()=>{$('#portfolio-search').value='';render();$('#portfolio-search').focus();});
     $('#filter-reset').addEventListener('click',reset);$('#empty-reset').addEventListener('click',reset);
     $('#portfolio-sort').addEventListener('change',()=>{
-      const cards=$$('.portfolio-item');cards.sort((a,b)=>$('#portfolio-sort').value==='name'?$('h2',a).textContent.localeCompare($('h2',b).textContent,'ko'):content.projects.findIndex(p=>p.id===a.dataset.id)-content.projects.findIndex(p=>p.id===b.dataset.id));cards.forEach(c=>$('.portfolio-grid').append(c));
+      const cards=$$('.portfolio-item');cards.sort((a,b)=>$('#portfolio-sort').value==='name'?$('h2',a).textContent.localeCompare($('h2',b).textContent,'ko'):content.projects.findIndex(p=>p.id===a.dataset.id)-content.projects.findIndex(p=>p.id===b.dataset.id));cards.forEach(c=>$('.portfolio-grid').append(c));render();
     });render();
   }
   if(mode==='portfolio'||mode==='story'){
