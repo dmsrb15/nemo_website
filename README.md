@@ -46,7 +46,10 @@ Node.js 설치 후 저장소 폴더에서 `npm ci`, `npm run dev`를 실행하�
 - `dist/portfolios.html`, `dist/portfolio.html`: 포트폴리오 목록과 공간 상세
 - `dist/inquiry.html`: 상담 신청 페이지
 - `dist/pages.css`, `dist/pages.js`: 하위 페이지의 반응형 화면과 상호작용
-- `dist/content.js`: 공간 콘셉트와 뉴스룸 콘텐츠
+- `dist/content.js`: 최초 콘텐츠 참조 (운영 글은 D1/R2에 저장)
+- `dist/admin.html`, `dist/admin.js`: 실시간 본문 편집과 관리자 화면
+- `dist/cms-render.js`, `dist/cms-render.css`: 편집기와 공개 글이 공유하는 렌더링
+- `worker/`: 로그인·권한·게시·조회수·휴지통 정리 API
 - `dist/shared.css`, `dist/shared.js`: 메뉴 정렬, 공통 안내 창과 약관
 - `dist/assets/`: 페이지 사진과 이미지
 - `server.mjs`: 로컬 미리보기 서버

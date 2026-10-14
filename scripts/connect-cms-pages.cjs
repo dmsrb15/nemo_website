@@ -6,3 +6,5 @@ for(const name of fs.readdirSync(dist).filter(n=>n.endsWith('.html')&&n!=='admin
  if(html.includes('pages.js')&&!html.includes('cms-public.js'))html=html.replace('</head>','<script src="/cms-public.js?v=1" defer></script></head>');
  fs.writeFileSync(file,html);
 }
+
+for(const name of ['portfolio','story','portfolios','newsroom']){const file=path.join(dist,name+'.html');let html=fs.readFileSync(file,'utf8');if(!html.includes('/cms-render.js'))html=html.replace('<script src="pages.js','<link rel="stylesheet" href="/cms-render.css?v=20261014-editor"><script src="/cms-render.js?v=20261014-editor" defer></script><script src="pages.js');html=html.replaceAll('pages.js?v=20261014-cms','pages.js?v=20261014-editor').replaceAll('/cms-public.js?v=1','/cms-public.js?v=20261014-editor');fs.writeFileSync(file,html);}

@@ -1,7 +1,9 @@
 import {sqliteTable,text,integer} from 'drizzle-orm/sqlite-core';
-export const admins=sqliteTable('cms_admin',{id:text('id').primaryKey(),email:text('email').notNull(),username:text('username'),password:text('password').notNull(),salt:text('salt').notNull(),platformId:text('platform_id').notNull()});
+export const admins=sqliteTable('cms_admin',{id:text('id').primaryKey(),email:text('email').notNull(),username:text('username').unique(),password:text('password').notNull(),salt:text('salt').notNull(),platformId:text('platform_id').notNull(),role:text('role').notNull().default('editor'),active:integer('active').notNull().default(1),created:integer('created').notNull().default(0),lastLogin:integer('last_login')});
 export const settings=sqliteTable('cms_settings',{key:text('key').primaryKey(),value:text('value').notNull()});
-export const sessions=sqliteTable('cms_sessions',{token:text('token').primaryKey(),expires:integer('expires').notNull()});
-export const posts=sqliteTable('cms_posts',{id:text('id').primaryKey(),type:text('type').notNull(),status:text('status').notNull(),title:text('title').notNull(),payload:text('payload').notNull(),published:text('published'),created:integer('created').notNull(),updated:integer('updated').notNull()});
+export const sessions=sqliteTable('cms_sessions',{token:text('token').primaryKey(),expires:integer('expires').notNull(),adminId:text('admin_id').notNull().default('owner')});
+export const posts=sqliteTable('cms_posts',{id:text('id').primaryKey(),type:text('type').notNull(),status:text('status').notNull(),title:text('title').notNull(),payload:text('payload').notNull(),published:text('published'),created:integer('created').notNull(),updated:integer('updated').notNull(),authorId:text('author_id'),editorId:text('editor_id'),archivedAt:integer('archived_at'),sortOrder:integer('sort_order').notNull().default(0),views:integer('views').notNull().default(0)});
+export const views=sqliteTable('cms_views',{key:text('key').primaryKey(),postId:text('post_id').notNull(),stamp:text('stamp').notNull(),expires:integer('expires').notNull()});
+export const garbage=sqliteTable('cms_gc',{id:text('id').primaryKey()});
 export const attempts=sqliteTable('cms_attempts',{key:text('key').primaryKey(),count:integer('count').notNull(),until:integer('until').notNull()});
 export const media=sqliteTable('cms_media',{id:text('id').primaryKey(),mime:text('mime').notNull(),size:integer('size').notNull(),created:integer('created').notNull()});

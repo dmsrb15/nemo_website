@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `cms_admin_username_unique` ON `cms_admin` (`username`);
