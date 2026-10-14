@@ -31,3 +31,15 @@
 .header nav,.header.at-end nav,.page-header nav{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none}
 @media(min-width:761px){.header nav,.header.at-end nav{padding:0}}
 @media(max-width:760px){.header.menu-open nav,.page-header.menu-open nav{background:linear-gradient(180deg,rgba(252,251,247,.85),rgba(252,251,247,.65))!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}}
+/* Direct service destinations, grouped consistently across every footer. */
+.footer-top:has(.footer-directory){align-items:flex-start;flex-wrap:wrap;gap:56px}
+.footer-top .footer-directory,.page-footer .footer-directory{display:grid;grid-template-columns:repeat(3,minmax(100px,1fr));align-items:start;gap:48px;margin-left:auto;font-size:13px}
+.footer-directory .footer-link-group{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.footer-directory .footer-link-group h2{font-size:13px;font-weight:700;margin:0 0 9px;color:var(--ink)}
+.footer-directory .footer-link-group a,.footer-directory .footer-link-group button{font:inherit;line-height:1.6;padding:0;color:#747870}
+.footer-directory .footer-link-group a:hover,.footer-directory .footer-link-group button:hover{color:var(--ink)}
+.footer-top .footer-email{flex-basis:100%;margin-left:auto;text-align:right}
+.page-footer:has(.footer-directory){grid-template-columns:1fr 1.4fr;align-items:start;row-gap:42px}
+.page-footer:has(.footer-directory)>a{grid-column:2;text-align:right;justify-self:end}
+.page-footer:has(.footer-directory)>small{grid-column:1/-1;text-align:left}
+@media(max-width:760px){.footer-top:has(.footer-directory){gap:38px}.footer-top .footer-directory,.page-footer .footer-directory{width:100%;margin:0;gap:20px;grid-template-columns:1fr 1fr 1fr;font-size:12px}.footer-directory .footer-link-group{gap:14px}.footer-directory .footer-link-group h2{font-size:12px}.footer-top .footer-email{margin:0;text-align:left}.page-footer:has(.footer-directory)>a{align-self:flex-start;text-align:left}}

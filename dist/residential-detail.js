@@ -12,23 +12,27 @@
  configure();motion.addEventListener('change',configure);
  const stage=root.querySelector('.res-process-stage');
  if(stage){
-  const title=stage.querySelector('.res-process-title'),cards=[...stage.querySelectorAll('[data-process-card]')],list=stage.querySelector('ol');let queued=false,cardHeight=100,gap=12,listHeight=440;
+  const title=stage.querySelector('.res-process-title'),cards=[...stage.querySelectorAll('[data-process-card]')],list=stage.querySelector('ol');let queued=false,cardHeight=300;
+  const overview=document.createElement('section');overview.className='res-process res-process-stage res-process-overview';overview.setAttribute('aria-label','진행 과정 전체');
+  const shell=document.createElement('div');shell.className='res-shell';const overviewList=list.cloneNode(true);overviewList.querySelectorAll('[data-process-card]').forEach(card=>card.removeAttribute('data-process-card'));shell.append(overviewList);overview.append(shell);stage.after(overview);
+  list.setAttribute('aria-hidden','true');
+  const overviewObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('overview-visible');}),{threshold:.12});overviewList.querySelectorAll('li').forEach(card=>overviewObserver.observe(card));
   const clamp=v=>Math.max(0,Math.min(1,v)),mix=(a,b,t)=>a+(b-a)*t,ease=t=>t*t*(3-2*t);
   function measure(){
    cards.forEach(card=>card.style.minHeight='');
-   cardHeight=Math.max(...cards.map(card=>card.offsetHeight));gap=innerWidth<=680?10:12;listHeight=cards.length*cardHeight+(cards.length-1)*gap;
-   stage.style.height=motion.matches?'auto':(cards.length*.65+1.65)*100+'svh';list.style.height=motion.matches?'auto':listHeight+'px';
+   cardHeight=Math.max(...cards.map(card=>card.offsetHeight));
+   stage.style.height=motion.matches?'auto':(cards.length*.7+1.3)*100+'svh';list.style.height=motion.matches?'auto':(cardHeight+48)+'px';
    cards.forEach(card=>card.style.minHeight=motion.matches?'':cardHeight+'px');
   }
   function renderStage(){queued=false;const rect=stage.getBoundingClientRect(),travel=Math.max(1,stage.offsetHeight-innerHeight),progress=clamp(-rect.top/travel),shown=rect.top<=2;
    title.classList.toggle('stage-visible',motion.matches||shown);
-   const rawTurn=clamp((progress-.09)/.62)*(cards.length-1),base=Math.floor(rawTurn),turn=base+ease(clamp((rawTurn-base-.72)/.28)),spread=ease(clamp((progress-.77)/.16)),center=(listHeight-cardHeight)/2;
+   const rawTurn=clamp((progress-.09)/.8)*(cards.length-1),base=Math.floor(rawTurn),turn=base+ease(clamp((rawTurn-base-.65)/.35)),spread=0,center=0;
    cards.forEach((card,i)=>{
     const delta=i-turn,depth=Math.min(3,Math.max(0,delta)),opacity=delta<0?clamp(1+delta*2):delta<=3?1:0;
     const deckY=center+(delta<0?(progress>=.77?0:delta*110):depth*14),scale=delta<0?1:1-depth*.035,rotation=delta<0?(progress>=.77?0:delta*5):depth*1.3;
     card.classList.toggle('stage-visible',motion.matches||shown&&progress>=.04);
     card.style.opacity=motion.matches?'1':shown&&progress>=.04?String(mix(opacity,1,spread)):'0';
-    card.style.transform=motion.matches?'none':`translateY(${mix(deckY,i*(cardHeight+gap),spread)}px) scale(${mix(scale,1,spread)}) rotate(${mix(rotation,0,spread)}deg)`;
+    card.style.transform=motion.matches?'none':`translateY(${deckY}px) scale(${scale}) rotate(${rotation}deg)`;
     card.style.zIndex=String(cards.length-i);
     const contentOpacity=motion.matches?1:mix(clamp(1-Math.abs(delta)*2),1,spread);
     [...card.children].forEach(child=>child.style.opacity=String(contentOpacity));

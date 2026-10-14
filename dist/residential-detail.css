@@ -89,3 +89,22 @@ body[data-page="service"] .res-process-stage li:nth-child(n){background:#fff;bor
 .process-deck-ready ol{position:relative;display:block}
 body[data-page="service"] .process-deck-ready li{position:absolute;inset:0 0 auto;width:100%;transform-origin:50% 50%;will-change:transform,opacity;transition:transform .12s linear,opacity .12s linear}
 @media(prefers-reduced-motion:reduce){.residential-detail .res-reveal-ready{opacity:1;transform:none;transition:none}.res-link span,.res-faq summary span{transition:none}body[data-page="service"] [data-res-photo] img,.res-process-emoji img{transform:none;transition:none}body[data-page="service"] .res-process-stage{height:auto;min-height:100svh}.res-process-window{position:static;min-height:100svh;height:auto}.stage-motion-ready .res-process-title,.stage-motion-ready [data-process-card]{opacity:1;transform:none;transition:none}.process-deck-ready ol{display:flex}body[data-page="service"] .process-deck-ready li{position:relative;inset:auto;will-change:auto;transition:none}}
+/* Larger cards retain the proportions of a business card. */
+.res-process-window>.res-shell{max-width:560px;padding:50px 0 30px}
+body[data-page="service"] .res-process-stage li{min-height:300px;padding:34px 36px;display:flex;flex-direction:column;gap:0;border-radius:26px;overflow:hidden;text-align:left}
+.res-process-stage li>span{font-size:13px;letter-spacing:.1em;margin:0 0 25px;align-self:auto}
+.res-process-stage li h3{font-size:30px;line-height:1.4;letter-spacing:-.045em;max-width:100%;margin-bottom:16px}
+.res-process-stage li p{font-size:17px;line-height:1.8;max-width:340px;padding-right:80px;margin:0}
+body[data-page="service"] .res-process-stage .res-process-emoji{width:110px;height:110px;right:26px;bottom:25px;transform:none}
+.res-process-stage .res-process-emoji img{width:110px;height:110px}
+.residential-detail .res-process-title{white-space:nowrap;font-size:clamp(32px,4.1vw,54px);margin-bottom:44px}
+body[data-page="service"] .res-process-overview{height:auto!important;padding:90px 0 140px;background:#fff}
+.res-process-overview>.res-shell{max-width:560px}
+.res-process-overview ol{gap:30px;list-style:none;padding:0}
+body[data-page="service"] .res-process-overview li{position:relative;opacity:0;transform:translateY(36px);transition:opacity .65s ease,transform .75s cubic-bezier(.22,1,.36,1)}
+body[data-page="service"] .res-process-overview li.overview-visible{opacity:1;transform:none}
+@media(max-width:680px){.res-process-window>.res-shell{padding:40px 0 20px;width:calc(100% - 40px)}.res-process-overview>.res-shell{width:calc(100% - 40px)}body[data-page="service"] .res-process-stage li{min-height:220px;padding:26px 25px;border-radius:22px}.res-process-stage li>span{margin-bottom:20px}.res-process-stage li h3{font-size:24px;margin-bottom:12px}.res-process-stage li p{font-size:14px;padding-right:66px;max-width:290px}body[data-page="service"] .res-process-stage .res-process-emoji,.res-process-stage .res-process-emoji img{width:82px;height:82px}.res-process-stage .res-process-emoji{right:16px!important;bottom:20px!important}.residential-detail .res-process-title{font-size:34px;margin-bottom:36px}body[data-page="service"] .res-process-overview{padding:55px 0 85px}.res-process-overview ol{gap:24px}}
+@media(max-height:600px) and (min-width:681px){body[data-page="service"] .res-process-stage li{min-height:245px}.res-process-window>.res-shell{padding:20px 0}.residential-detail .res-process-title{font-size:38px;margin-bottom:24px}}
+@media(prefers-reduced-motion:reduce){.res-process-window{min-height:0}.process-deck-ready ol{display:none}.res-process-window>.res-shell{padding:90px 0 0}body[data-page="service"] .res-process-stage:not(.res-process-overview){min-height:0}body[data-page="service"] .res-process-overview li{opacity:1;transform:none;transition:none}}
+body[data-page="service"] .res-process-stage:not(.stage-motion-ready):not(.res-process-overview){height:auto;min-height:0}
+.res-process-stage:not(.stage-motion-ready)>.res-process-window{position:static;height:auto;overflow:visible;padding-block:60px}
