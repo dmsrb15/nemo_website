@@ -89,6 +89,6 @@ body[data-page="service"] .res-process-stage.process-deck-ready li:nth-child(n){
 body[data-page="service"] .res-process-stage:not(.stage-motion-ready){height:auto}
 .res-process-stage:not(.stage-motion-ready) .res-process-window{position:static;height:auto;min-height:100svh;padding-block:60px}
 @media(prefers-reduced-motion:reduce){body[data-page="service"] .res-process-stage{height:auto;min-height:0}.res-process-window{position:static;height:auto;min-height:100svh;padding-block:60px}.stage-motion-ready .res-process-title{opacity:1;transform:none;transition:none}.residential-detail .res-reveal-ready{opacity:1;transform:none;transition:none}body[data-page="service"] [data-res-photo] img{transform:none;transition:none}}
-/* One continuous landing-paper colour from consultation to the footer. */
-.res-service-tail,.res-service-tail .res-ending{background:var(--paper,#efefef)}
+/* Continue the white service-page background through the footer. */
+.res-service-tail,.res-service-tail .res-ending,body[data-page="service"] .nemo-footer{background:#fff}
 .res-service-tail .service-other{background:transparent}
