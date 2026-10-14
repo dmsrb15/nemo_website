@@ -24,7 +24,7 @@ for(const [id,c] of Object.entries(copy)){
  <nav class="service-other res-shell" aria-label="다른 서비스"><span>다른 공간도 살펴보세요.</span><div>${Object.entries(data).filter(([key])=>key!==id).map(([key,d])=>`<a href="${key}.html">${d.label} <span aria-hidden="true">↗</span></a>`).join('')}</div></nav></main>`;
  let html=fs.readFileSync(file,'utf8').replace(/<main id="page-main"[\s\S]*?<\/main>/,main);
  html=html.replace(/<script src="(?:service-detail|residential-detail)\.js[^\"]*" defer><\/script>/g,'').replace(/<link rel="stylesheet" href="residential-detail\.css[^\"]*">/g,'');
- html=html.replace('</head>','<link rel="stylesheet" href="residential-detail.css?v=20261014-services-refined-8"><script src="residential-detail.js?v=20261014-services-refined-8" defer></script></head>');fs.writeFileSync(file,html);
+ html=html.replace('</head>','<link rel="stylesheet" href="residential-detail.css?v=20261014-services-deck-9"><script src="residential-detail.js?v=20261014-services-deck-9" defer></script></head>');fs.writeFileSync(file,html);
 }
 fs.writeFileSync(path.join(root,'service-content.json'),JSON.stringify(data,null,2)+'\n');
 console.log('Built five editorial service pages.');

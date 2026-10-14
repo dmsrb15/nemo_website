@@ -12,13 +12,30 @@
  configure();motion.addEventListener('change',configure);
  const stage=root.querySelector('.res-process-stage');
  if(stage){
-  const title=stage.querySelector('.res-process-title'),cards=[...stage.querySelectorAll('[data-process-card]')];let queued=false;
-  function renderStage(){queued=false;const rect=stage.getBoundingClientRect(),travel=Math.max(1,stage.offsetHeight-innerHeight),progress=Math.max(0,Math.min(1,-rect.top/travel));
-   title.classList.toggle('stage-visible',motion.matches||rect.top<=2);
-   cards.forEach((card,i)=>card.classList.toggle('stage-visible',motion.matches||progress>=.12+i*(.54/Math.max(1,cards.length-1))));
+  const title=stage.querySelector('.res-process-title'),cards=[...stage.querySelectorAll('[data-process-card]')],list=stage.querySelector('ol');let queued=false,cardHeight=100,gap=12,listHeight=440;
+  const clamp=v=>Math.max(0,Math.min(1,v)),mix=(a,b,t)=>a+(b-a)*t,ease=t=>t*t*(3-2*t);
+  function measure(){
+   cards.forEach(card=>card.style.minHeight='');
+   cardHeight=Math.max(...cards.map(card=>card.offsetHeight));gap=innerWidth<=680?10:12;listHeight=cards.length*cardHeight+(cards.length-1)*gap;
+   stage.style.height=motion.matches?'auto':(cards.length*.65+1.65)*100+'svh';list.style.height=motion.matches?'auto':listHeight+'px';
+   cards.forEach(card=>card.style.minHeight=motion.matches?'':cardHeight+'px');
+  }
+  function renderStage(){queued=false;const rect=stage.getBoundingClientRect(),travel=Math.max(1,stage.offsetHeight-innerHeight),progress=clamp(-rect.top/travel),shown=rect.top<=2;
+   title.classList.toggle('stage-visible',motion.matches||shown);
+   const rawTurn=clamp((progress-.09)/.62)*(cards.length-1),base=Math.floor(rawTurn),turn=base+ease(clamp((rawTurn-base-.72)/.28)),spread=ease(clamp((progress-.77)/.16)),center=(listHeight-cardHeight)/2;
+   cards.forEach((card,i)=>{
+    const delta=i-turn,depth=Math.min(3,Math.max(0,delta)),opacity=delta<0?clamp(1+delta*2):delta<=3?1:0;
+    const deckY=center+(delta<0?(progress>=.77?0:delta*110):depth*14),scale=delta<0?1:1-depth*.035,rotation=delta<0?(progress>=.77?0:delta*5):depth*1.3;
+    card.classList.toggle('stage-visible',motion.matches||shown&&progress>=.04);
+    card.style.opacity=motion.matches?'1':shown&&progress>=.04?String(mix(opacity,1,spread)):'0';
+    card.style.transform=motion.matches?'none':`translateY(${mix(deckY,i*(cardHeight+gap),spread)}px) scale(${mix(scale,1,spread)}) rotate(${mix(rotation,0,spread)}deg)`;
+    card.style.zIndex=String(cards.length-i);
+    const contentOpacity=motion.matches?1:mix(clamp(1-Math.abs(delta)*2),1,spread);
+    [...card.children].forEach(child=>child.style.opacity=String(contentOpacity));
+   });
   }
   function requestStage(){if(!queued){queued=true;requestAnimationFrame(renderStage);}}
-  stage.classList.add('stage-motion-ready');addEventListener('scroll',requestStage,{passive:true});addEventListener('resize',requestStage);motion.addEventListener('change',requestStage);renderStage();
+  stage.classList.add('stage-motion-ready','process-deck-ready');measure();addEventListener('scroll',requestStage,{passive:true});addEventListener('resize',()=>{measure();requestStage();});motion.addEventListener('change',()=>{measure();requestStage();});renderStage();
  }
  root.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open&&!motion.matches)d.querySelector('p').animate([{opacity:0},{opacity:1}],{duration:250});}));
 })();
