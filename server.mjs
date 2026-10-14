@@ -1,6 +1,7 @@
 // Local-only preview. Identity injection and cookie translation are never bundled in production.
 import {Miniflare} from 'miniflare';import fs from 'node:fs/promises';import path from 'node:path';import http from 'node:http';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';
 execFileSync(process.execPath,['scripts/build-cms.cjs'],{stdio:'inherit'});
+const previewPort=Number(process.env.NEMO_PREVIEW_PORT||4317);if(!Number.isInteger(previewPort)||previewPort<1024||previewPort>65535)throw Error('Invalid preview port');
 const root=path.resolve('dist/client'),ownerEmail='owner@sites.test',ownerId='local_owner';
 await fs.mkdir('.wrangler/cms',{recursive:true});let secrets;try{secrets=JSON.parse(await fs.readFile('.wrangler/cms/local-secrets.json','utf8'));}catch{secrets={pepper:crypto.randomBytes(32).toString('base64url')};await fs.writeFile('.wrangler/cms/local-secrets.json',JSON.stringify(secrets));}
 const localSalt=crypto.randomBytes(32).toString('base64url'),localHash=crypto.pbkdf2Sync(crypto.createHmac('sha256',secrets.pepper).update('local-preview').digest(),localSalt,100000,32,'sha256').toString('base64url');
@@ -10,9 +11,10 @@ const db=await mf.getD1Database('DB');await db.prepare('CREATE TABLE IF NOT EXIS
 for(const file of(await fs.readdir('drizzle')).filter(n=>n.endsWith('.sql'))){const sql=await fs.readFile(path.join('drizzle',file),'utf8'),hash=crypto.createHash('sha256').update(sql).digest('hex'),applied=await db.prepare('SELECT hash FROM local_cms_migrations WHERE name=?').bind(file).first();if(applied){if(applied.hash!==hash)throw Error('An applied migration was changed: '+file);continue;}await db.batch([...sql.split('--> statement-breakpoint').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)),db.prepare('INSERT INTO local_cms_migrations (name,hash) VALUES (?,?)').bind(file,hash)]);}
 const server=http.createServer(async(incoming,outgoing)=>{
  try{const chunks=[];for await(const chunk of incoming)chunks.push(chunk);const headers=new Headers(incoming.headers);headers.set('oai-authenticated-user-email',ownerEmail);headers.set('oai-authenticated-user-id',ownerId);if(headers.has('cookie'))headers.set('cookie',headers.get('cookie').replace(/nemo_admin_preview=/g,'__Host-nemo_admin=').replace(/nemo_reader_preview=/g,'__Host-nemo_reader='));
- const response=await mf.dispatchFetch('http://127.0.0.1:4317'+incoming.url,{method:incoming.method,headers,...(['GET','HEAD'].includes(incoming.method)?{}:{body:Buffer.concat(chunks)})});outgoing.statusCode=response.status;
+ const response=await mf.dispatchFetch('http://127.0.0.1:'+previewPort+incoming.url,{method:incoming.method,headers,...(['GET','HEAD'].includes(incoming.method)?{}:{body:Buffer.concat(chunks)})});outgoing.statusCode=response.status;
  for(const [key,value]of response.headers){if(key==='set-cookie')outgoing.setHeader(key,value.replace('__Host-nemo_admin=','nemo_admin_preview=').replace('__Host-nemo_reader=','nemo_reader_preview=').replace('; Secure',''));else outgoing.setHeader(key,value);}outgoing.end(Buffer.from(await response.arrayBuffer()));
  }catch(error){outgoing.statusCode=500;outgoing.end(error.message);}
 });
-server.listen(4317,'127.0.0.1',()=>console.log('Local: http://127.0.0.1:4317/admin'));
+server.on('error',async error=>{console.error(error.message);await mf.dispose();process.exitCode=1;});
+server.listen(previewPort,'127.0.0.1',()=>console.log('Local: http://127.0.0.1:'+previewPort+'/admin'));
 process.on('SIGINT',async()=>{server.close();await mf.dispose();process.exit(0);});
