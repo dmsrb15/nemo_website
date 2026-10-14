@@ -43,3 +43,17 @@
 .page-footer:has(.footer-directory)>a{grid-column:2;text-align:right;justify-self:end}
 .page-footer:has(.footer-directory)>small{grid-column:1/-1;text-align:left}
 @media(max-width:760px){.footer-top:has(.footer-directory){gap:38px}.footer-top .footer-directory,.page-footer .footer-directory{width:100%;margin:0;gap:20px;grid-template-columns:1fr 1fr 1fr;font-size:12px}.footer-directory .footer-link-group{gap:14px}.footer-directory .footer-link-group h2{font-size:12px}.footer-top .footer-email{margin:0;text-align:left}.page-footer:has(.footer-directory)>a{align-self:flex-start;text-align:left}}
+/* Shared footer: match the landing page background and contact order. */
+.nemo-footer{background:var(--paper,#efefef);padding:75px 5% 40px;color:var(--ink)}
+.nemo-footer .footer-top,.nemo-footer .footer-bottom{max-width:1440px;margin-inline:auto}
+.nemo-footer .footer-top{display:flex;align-items:flex-start;gap:60px;flex-wrap:nowrap;padding-bottom:45px;border-bottom:1px solid var(--line)}
+.nemo-footer .footer-brand{margin-right:auto;flex:1}
+.nemo-footer .footer-brand .wordmark{width:max-content}
+.nemo-footer .footer-brand p{font-size:12px;color:#8a8d84;line-height:1.7;margin-top:20px}
+.nemo-footer .footer-directory{display:grid;grid-template-columns:repeat(3,minmax(105px,1fr));gap:48px;width:auto;margin:0;align-items:start}
+.nemo-footer .footer-bottom{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;padding-top:30px;font-size:11px;line-height:1.9;color:#84877e}
+.nemo-footer .footer-business p{margin:0}
+.nemo-footer .footer-business .footer-email{display:block;font-size:12px;margin:9px 0 0;text-align:left;line-height:1.8;color:#6f746b;flex-basis:auto}
+.nemo-footer .footer-legal{font-size:11px;line-height:1.9;text-align:right}
+.nemo-footer .footer-legal>div{display:flex;justify-content:flex-end;gap:18px;flex-wrap:wrap;margin-top:16px}
+@media(max-width:760px){.nemo-footer{padding:55px 25px 35px}.nemo-footer .footer-top{display:flex;flex-direction:column;gap:38px;padding-bottom:35px}.nemo-footer .footer-directory{grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:20px}.nemo-footer .footer-bottom{flex-direction:column;gap:25px;font-size:10px}.nemo-footer .footer-business .footer-email{font-size:11px}.nemo-footer .footer-brand p{margin-top:16px}.nemo-footer .footer-legal{text-align:left;font-size:10px}.nemo-footer .footer-legal>div{justify-content:flex-start;gap:15px}}

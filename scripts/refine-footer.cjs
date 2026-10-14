@@ -1,7 +1,8 @@
 const fs = require('fs'), path = require('path');
 const dist = path.resolve(__dirname, '../dist');
 const menu = `<nav class="footer-directory" aria-label="하단 메뉴"><div class="footer-link-group"><h2>공간 서비스</h2><a href="residential.html">주거 공간</a><a href="commercial.html">상업 공간</a><a href="office.html">사무 공간</a><a href="popup.html">팝업 공간</a></div><div class="footer-link-group"><h2>디자인 서비스</h2><a href="branding.html">브랜딩</a><a href="styling.html">스타일링</a></div><div class="footer-link-group"><h2>네모</h2><a href="portfolios.html">포트폴리오</a><a href="about.html">회사소개</a><a href="newsroom.html">뉴스룸</a><button type="button" data-info="careers">채용</button></div></nav>`;
+const footer = `<footer class="nemo-footer"><div class="footer-top"><div class="footer-brand"><a class="wordmark" href="index.html#home" aria-label="NEMO 처음으로">NEMO<span class="logo-dot"></span></a><p>가능성을 담다, 공간을 바꾸다.</p></div>${menu}</div><div class="footer-bottom"><div class="footer-business"><p>상호 : 네모 / 대표자 : 김은규 / 사업자 등록번호 : 397-46-01371</p><p>통신판매업 신고 : 제 2026-성남수정-0369호 / 개인정보관리책임자 : 김은규</p><p class="footer-address">경기도 성남시 수정구 산성대로283번길 6-17, 2층 21115호 / <a href="tel:01026346834">010-2634-6834</a></p><a class="footer-email" href="mailto:nemo_interior_@naver.com">nemo_interior_@naver.com ↗</a></div><div class="footer-legal"><span>© 2026 네모 All rights reserved.</span><div><button type="button" data-info="privacy">개인정보처리방침</button><button type="button" data-info="terms">이용약관</button><button type="button" data-info="marketing">마케팅 정보 활용·수신 안내</button></div></div></div></footer>`;
 for (const file of fs.readdirSync(dist).filter(file => file.endsWith('.html'))) {
  const target = path.join(dist, file), html = fs.readFileSync(target, 'utf8');
- fs.writeFileSync(target, html.replace(/<footer\b[\s\S]*?<\/footer>/g, footer => footer.replace(/<nav\b[^>]*>[\s\S]*?<\/nav>/, menu)));
+ fs.writeFileSync(target, html.replace(/<footer\b[\s\S]*?<\/footer>/g, footer));
 }

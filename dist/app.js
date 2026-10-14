@@ -39,6 +39,7 @@ function setSceneVisibility(section, opacity) {
 }
 function updateProcess() {
   const process = $('.process');
+  if (!process) return;
   const steps = $$('.process-step', process);
   const buttons = $$('[data-process]', process);
   const progress = clamp(-process.getBoundingClientRect().top / Math.max(1, process.offsetHeight - innerHeight));

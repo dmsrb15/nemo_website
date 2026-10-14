@@ -15,6 +15,6 @@ const main=`<main id="page-main" class="service-detail residential-detail">
 </main>`;
 let html=fs.readFileSync(file,'utf8').replace(/<main id="page-main"[\s\S]*?<\/main>/,main);
 html=html.replace(/<script src="service-detail\.js[^\"]*" defer><\/script>/g,'').replace(/<link rel="stylesheet" href="residential-detail\.css[^\"]*">/g,'').replace(/<script src="residential-detail\.js[^\"]*" defer><\/script>/g,'');
-html=html.replace('</head>','<link rel="stylesheet" href="residential-detail.css?v=20261014-services-deck-9"><script src="residential-detail.js?v=20261014-services-deck-9" defer></script></head>');
+html=html.replace('</head>','<link rel="stylesheet" href="residential-detail.css?v=20261014-portrait-cards-2"><script src="residential-detail.js?v=20261014-portrait-cards-2" defer></script></head>');
 fs.writeFileSync(file,html);
 console.log('Built residential lifestyle page.');
