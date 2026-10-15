@@ -76,3 +76,15 @@
 @media(max-width:680px){.svc-projects-head{display:flex;align-items:end;gap:15px}.svc-projects-head .res-label{margin-bottom:14px}.residential-detail .svc-projects h2{font-size:27px}.svc-gallery-controls{gap:6px}.svc-gallery-controls button{width:35px;height:35px;font-size:18px}.svc-gallery-status{display:none}.svc-project-grid,.svc-project-grid[data-count="2"]{gap:16px}.svc-project-grid>.svc-project{flex-basis:85%}.res-life-chapter .res-chapter-head,.res-consult-editorial .res-consult-heading{position:static}.res-life-points{margin-top:32px}.residential-detail .res-life-points h3{font-size:21px}.residential-detail .res-life-points p{font-size:16px}.svc-project-all .svc-project-visual{padding:28px}.svc-project-all strong{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.svc-project-grid{scroll-behavior:auto}.svc-gallery-controls button{transition:none}}
 @media(max-width:680px){.svc-projects-head{display:block}.svc-gallery-controls{justify-content:flex-end;margin-top:20px}.svc-gallery-status{display:inline;margin-right:auto}.residential-detail .svc-projects h2{font-size:28px}}
+
+/* Quiet transitions between the gallery and the next story. */
+.svc-projects{padding-bottom:clamp(240px,34svh,380px)}
+.svc-projects-head .res-label,.svc-gallery-status{display:none}
+.svc-project-grid:focus-visible{outline:0}
+.svc-project-grid:focus-visible::after{content:none}
+.svc-project-grid:focus-visible .svc-project:first-child .svc-project-visual{border-color:#75836f}
+.svc-focus-panel{padding-top:40px!important}
+.svc-preparation .res-material-notes article{grid-template-columns:1fr;gap:0}
+@media(max-width:680px){.svc-projects{padding-bottom:190px}.svc-gallery-controls{margin-top:22px}}
+
+.res-life-points article{grid-template-columns:1fr}.svc-project-meta{margin:28px 0 12px}

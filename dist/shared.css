@@ -64,3 +64,12 @@
 .services-dropdown-grid a{border-radius:12px;padding:14px 18px;transition:background .2s}
 .services-dropdown-grid a:hover{background:rgba(224,224,211,.35)}
 .services-dropdown-grid a:hover strong{color:#454d3e}
+
+/* Geometric brand mark and removal of obsolete review coordinates. */
+.wordmark{position:relative!important;display:block!important;width:126px!important;height:31px!important;flex-shrink:0;font-size:0!important;letter-spacing:0!important;line-height:0!important;background:url('/assets/nemo-logo.svg?v=20261016-geometric') left center/contain no-repeat!important}
+.wordmark .logo-dot{display:none!important}
+.nemo-footer .footer-brand .wordmark{width:180px!important;height:43px!important}
+.edit-number,.scene-number,.svc-focus-count{display:none!important}
+.section-rail b{display:none!important}
+.section-rail span{left:26px}
+@media(max-width:760px){.wordmark{width:105px!important;height:26px!important}.nemo-footer .footer-brand .wordmark{width:155px!important;height:37px!important}.section-rail span{left:20px}}

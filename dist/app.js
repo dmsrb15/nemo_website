@@ -20,7 +20,6 @@ function selectService(index){
  selectedService=index;
  $$('.selector-option').forEach((item,i)=>{item.classList.toggle('is-active',i===index);$('[data-service-select]',item).setAttribute('aria-expanded',String(i===index));$('.selector-detail',item).hidden=i!==index;});
  const art=$('#selector-art');art.className='atlas '+serviceChoices[index][2];art.setAttribute('aria-label',serviceChoices[index][1]+' 공간 일러스트');
- $('#selector-image-number').textContent=['02-02','03-02','03-04','03-06'][index];
  $('#selector-image-caption').textContent=['취향과 생활을 담는 집','브랜드를 담는 공간','집중과 협업을 연결하는 오피스','짧은 만남을 오래 남기는 공간'][index];
 }
 function updateServiceSelector(scene){
@@ -89,7 +88,7 @@ function updateStory() {
     photo.style.top = mix(expandedTop, mobile ? 40 : 70, shrink) + 'px';
     photo.style.height = mix(expandedHeight, innerHeight * .82, shrink) + 'px';
     photo.style.borderRadius = mix(0, mobile ? 30 : 65, shrink) + 'px';
-    $('.scene-number').style.opacity = 1 - exit;
+
     photo.style.transform = `translateY(${-exit * innerHeight * 1.1}px)`;
     $('.hero-title').style.opacity = 1 - clamp((scene - .55) / .3);
     $('.hero-caption').style.opacity = 1 - detail;

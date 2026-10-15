@@ -33,10 +33,10 @@
    const arrow=document.createElement('span');arrow.className='svc-project-all-arrow';arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
    tile.append(label,heading,arrow);all.replaceChildren(tile);grid.append(all);
    const controls=document.createElement('div');controls.className='svc-gallery-controls';
-   const status=document.createElement('span');status.className='svc-gallery-status';
+
    const makeButton=(label,text)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',category+' 포트폴리오 '+label);b.setAttribute('aria-controls',grid.id);b.textContent=text;return b;};
-   const prev=makeButton('이전','←'),next=makeButton('다음','→');controls.append(status,prev,next);section.querySelector('.svc-projects-head').append(controls);
-   status.textContent=count+'개의 포트폴리오';
+   const prev=makeButton('이전','←'),next=makeButton('다음','→');controls.append(prev,next);section.querySelector('.svc-projects-head').append(controls);
+
    function sync(){const max=grid.scrollWidth-grid.clientWidth;prev.disabled=grid.scrollLeft<2;next.disabled=grid.scrollLeft>=max-2;}
    function move(direction){const step=grid.firstElementChild.getBoundingClientRect().width+parseFloat(getComputedStyle(grid).gap);grid.scrollBy({left:direction*step,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});}
    prev.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
@@ -44,9 +44,9 @@
    grid.addEventListener('scroll',sync,{passive:true});new ResizeObserver(sync).observe(grid);sync();
   }
  }
- const panels=[...root.querySelectorAll('.svc-focus-panel')],counter=root.querySelector('.svc-focus-count b');
+ const panels=[...root.querySelectorAll('.svc-focus-panel')];
  let pending=false;
- function updateFocus(){pending=false;if(!panels.length)return;const center=innerHeight*.5;let nearest=0,distance=Infinity;panels.forEach((p,i)=>{const r=p.getBoundingClientRect(),d=Math.abs(r.top+r.height/2-center);if(d<distance){distance=d;nearest=i;}});panels.forEach((p,i)=>p.classList.toggle('is-current',i===nearest));if(counter)counter.textContent=String(nearest+1).padStart(2,'0');}
+ function updateFocus(){pending=false;if(!panels.length)return;const center=innerHeight*.5;let nearest=0,distance=Infinity;panels.forEach((p,i)=>{const r=p.getBoundingClientRect(),d=Math.abs(r.top+r.height/2-center);if(d<distance){distance=d;nearest=i;}});panels.forEach((p,i)=>p.classList.toggle('is-current',i===nearest));}
  function requestFocus(){if(!pending){pending=true;requestAnimationFrame(updateFocus);}}
  if(panels.length){addEventListener('scroll',requestFocus,{passive:true});addEventListener('resize',requestFocus);updateFocus();}
 })();
