@@ -132,5 +132,12 @@ dialog{border:0;border-radius:28px;padding:45px;width:min(600px,calc(100% - 32px
 .pin-count{position:absolute;right:-1px;top:-1px;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center;border-radius:12px;background:var(--yellow);color:#222;font-size:9px;font-weight:800;border:1px solid #574d2b}
 .map-review-controls{display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:12px;font-size:11px;color:var(--muted)}
 .map-review-controls button{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:50%;color:var(--ink)}
+.pin-dot::after{content:"";position:absolute;inset:-3px;border:1px solid #18b99b;border-radius:50%;pointer-events:none;animation:review-pin-ripple 3.4s ease-out infinite;animation-delay:var(--pulse-delay,0s)}
+.review-map-meta .project-counter{display:inline;color:inherit;margin:0;font-variant-numeric:tabular-nums}
+.review-map-meta strong{font-variant-numeric:tabular-nums;display:inline-block;min-width:3ch}
+.review-pin[data-region="gyeonggi-north"] .pin-label{top:-7px}
+.review-pin[data-region="gyeonggi-south"] .pin-label{top:20px}
+@keyframes review-pin-ripple{0%{transform:scale(.7);opacity:0}12%{opacity:.4}75%,100%{transform:scale(2.5);opacity:0}}
+@media(prefers-reduced-motion:reduce){.pin-dot::after{animation:none;display:none}}
 .overseas-project-list p{margin-top:12px;font-size:14px;line-height:1.7;color:var(--muted)}
 @media(max-width:760px){.project-all .project-image{padding:24px;gap:15px}.project-all .project-image strong{font-size:25px}.project-all .project-image>span:first-child{font-size:11px}.pin-count{right:0;top:0}}

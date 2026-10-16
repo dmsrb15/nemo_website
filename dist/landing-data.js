@@ -1,5 +1,6 @@
 (function(root){
  const regions=[
+  ['gyeonggi-north','경기 북부',29,16],['gyeonggi-south','경기 남부',30,31],['gangwon','강원',47,22],['chungbuk','충북',42,36],['chungnam','충남',27,40],['jeonbuk','전북',29,51],['jeonnam','전남',23,65],['gyeongbuk','경북',53,40],['gyeongnam','경남',46,59],
   ['seoul','서울',26.48,23.14],['incheon','인천',22,25],['suwon','수원',28,29],['chuncheon','춘천',42,18],['gangneung','강릉',56.41,20.03],['cheongju','청주',37,38],['daejeon','대전',32.81,42.87],['jeonju','전주',27,53],['gwangju','광주',24.4,62.27],['mokpo','목포',19,68],['daegu','대구',52.06,50.67],['andong','안동',52,39],['ulsan','울산',61,55],['busan','부산',59.56,61.94],['changwon','창원',50,63],['jeju','제주',19.32,89.31]
  ].map(([id,label,x,y])=>({id,label,x,y}));
  const defaults={reviewEyebrow:'LIFE IN A NEW SPACE',reviewTitle:'공간에 담고 싶은,\n우리의 이야기.',totalLabel:'Total Projects',totalProjects:'200+',overseasLabel:'Abroad',overseasProjects:'5+',dataSource:'Data - NEMO',

@@ -156,4 +156,6 @@ html[data-theme="dark"] .project-all .project-image>span:first-child{color:var(-
 html[data-theme="dark"] .pin-count{background:var(--yellow);color:#eeeeee;border:1px solid #574d2b}
 html[data-theme="dark"] .map-review-controls{color:var(--muted)}
 html[data-theme="dark"] .map-review-controls button{border:1px solid var(--line);color:var(--ink)}
+html[data-theme="dark"] .pin-dot::after{border:1px solid #18b99b}
+html[data-theme="dark"] .review-map-meta .project-counter{color:inherit}
 html[data-theme="dark"] .overseas-project-list p{color:var(--muted)}

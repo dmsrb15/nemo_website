@@ -66,9 +66,9 @@ for(const name of fs.readdirSync(dist).filter(n=>n.endsWith('.css')&&n!=='theme.
 for(const name of fs.readdirSync(dist).filter(n=>n.endsWith('.html'))){
  const file=path.join(dist,name);let html=fs.readFileSync(file,'utf8');
  html=html.replace(/<link\b[^>]*data-nemo-theme[^>]*>/gi,'').replace(/<script\b[^>]*data-nemo-theme[^>]*>[\s\S]*?<\/script>/gi,'');
- html=html.replace(/(<meta charset="utf-8">)/i,'$1<script data-nemo-theme src="/theme.js?v=20261016-landing-1"></script>');
- html=html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi,tag=>{const href=tag.match(/href="([^"?]+)(?:\?[^" ]*)?"/i)?.[1],base=href&&path.basename(href);return base&&fs.existsSync(path.join(out,base))?tag+'<link data-nemo-theme rel="stylesheet" href="/themes/'+base+'?v=20261016-landing-1">':tag;});
- if(!/href="\/?cms-render\.css/.test(html))html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/themes/cms-render.css?v=20261016-landing-1"></head>');
- html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/theme.css?v=20261016-landing-1"></head>');
+ html=html.replace(/(<meta charset="utf-8">)/i,'$1<script data-nemo-theme src="/theme.js?v=20261016-map-motion"></script>');
+ html=html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi,tag=>{const href=tag.match(/href="([^"?]+)(?:\?[^" ]*)?"/i)?.[1],base=href&&path.basename(href);return base&&fs.existsSync(path.join(out,base))?tag+'<link data-nemo-theme rel="stylesheet" href="/themes/'+base+'?v=20261016-map-motion">':tag;});
+ if(!/href="\/?cms-render\.css/.test(html))html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/themes/cms-render.css?v=20261016-map-motion"></head>');
+ html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/theme.css?v=20261016-map-motion"></head>');
  fs.writeFileSync(file,html);
 }

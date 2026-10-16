@@ -46,4 +46,4 @@ html[data-theme="dark"] .pin-label{top:7px;color:#f5edcf;background:#1c1c1cf2;bo
 html[data-theme="dark"] .review-pin.selected .pin-label{color:#ffdd55;border-color:#b79b43}
 html[data-theme="dark"] .map-review-region{color:#ffdd55}
 
-html[data-theme="dark"] .pin-count{background:#ffdd55;color:#222}
+html[data-theme="dark"] .pin-dot::after{border-color:#ffdd55}
