@@ -1,5 +1,6 @@
 const fs=require('fs'),path=require('path'),esbuild=require('esbuild');
 require('./build-preview.cjs');
+require('./build-theme.cjs');
 (async()=>{
  const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist'),client=path.join(dist,'client'),server=path.join(dist,'server');
  fs.mkdirSync(client,{recursive:true});fs.mkdirSync(server,{recursive:true});

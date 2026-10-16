@@ -1,0 +1,3 @@
+html[data-theme="dark"] body[data-page="preview"]{background:#1d231f}
+html[data-theme="dark"] .preview-waiting{color:#b1bcb3}
+html[data-theme="dark"] body[data-page="preview"] .cms-contact{background:#1d231f}

@@ -1,0 +1,54 @@
+html[data-theme="dark"] .cms-document{color:#edf1eb}
+html[data-theme="dark"] .cms-cover{background:#1d231f}
+html[data-theme="dark"] .cms-meta{color:#b1bcb3}
+html[data-theme="dark"] .cms-document .cms-lead{color:#b1bcb3}
+html[data-theme="dark"] .cms-prices dt{color:#b1bcb3}
+html[data-theme="dark"] .cms-points span{background:#1d231f;color:#b1bcb3}
+html[data-theme="dark"] .cms-block p{color:#b1bcb3}
+html[data-theme="dark"] .cms-block figcaption{color:#b1bcb3}
+html[data-theme="dark"] .cms-note{background:#1d231f}
+html[data-theme="dark"] .cms-related{border-top:1px solid #3c463f}
+html[data-theme="dark"] .cms-related a{color:inherit}
+html[data-theme="dark"] .cms-related img,html[data-theme="dark"] .cms-related .cms-sprite{background:#1d231f}
+html[data-theme="dark"] .cms-related a>span{color:#b1bcb3}
+html[data-theme="dark"] .cms-empty-cover{color:#b1bcb3}
+html[data-theme="dark"] .cms-share{color:#b1bcb3}
+html[data-theme="dark"] .cms-share button,html[data-theme="dark"] .cms-share a{border:1px solid #3c463f;background:#1d231f;color:#b1bcb3}
+html[data-theme="dark"] .cms-editing [contenteditable]:empty:before{color:#b1bcb3}
+html[data-theme="dark"] .cms-editing .cms-block{border:1px dashed #3c463f}
+html[data-theme="dark"] .cms-editing .cms-block.active{border-color:#3c463f;background:#1d231f}
+html[data-theme="dark"] .cms-block-tools{color:#b1bcb3}
+html[data-theme="dark"] .cms-block-tools button,html[data-theme="dark"] .cms-insert-end button{border:1px solid #3c463f;background:#1d231f;color:#b1bcb3}
+html[data-theme="dark"] .cms-cover-hint{background:#1d231fdb}
+html[data-theme="dark"] .cms-related-empty{color:#b1bcb3!important}
+html[data-theme="dark"] .cms-photo-dialog{border:0;background:#1d231f}
+html[data-theme="dark"] .cms-photo-dialog::backdrop{background:#151e19c9}
+html[data-theme="dark"] .cms-photo-dialog>[data-photo-close]{background:none;border:0}
+html[data-theme="dark"] .cms-photo-controls button{background:none;border:1px solid #3c463f}
+html[data-theme="dark"] .cms-contact{background:#1d231f}
+html[data-theme="dark"] .cms-contact a{background:#ffea84;color:#edf1eb}
+html[data-theme="dark"] body[data-page="portfolio"],html[data-theme="dark"] body[data-page="story"],html[data-theme="dark"] body[data-page="portfolios"]{background:#1d231f}
+html[data-theme="dark"] .cms-document{background:#1d231f}
+html[data-theme="dark"] .cms-cover{background:#1d231f}
+html[data-theme="dark"] .cms-note{background:#1d231f;border-top:1px solid #3c463f}
+html[data-theme="dark"] .cms-contact{background:#1d231f}
+html[data-theme="dark"] .cms-related img{background:#1d231f}
+html[data-theme="dark"] body[data-page="portfolios"] .portfolio-cover{background:#1d231f}
+html[data-theme="dark"] .cms-related .cms-contact{background:#1d231f}
+html[data-theme="dark"] .cms-gallery-controls button{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .cms-toc{border-top:1px solid #3c463f;border-bottom:1px solid #3c463f}
+html[data-theme="dark"] .cms-toc a{color:#b1bcb3}
+html[data-theme="dark"] .cms-video{background:#1d231f}
+html[data-theme="dark"] .cms-video iframe{border:0}
+html[data-theme="dark"] .cms-video-edit{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .cms-video-edit input{border:1px solid #3c463f}
+html[data-theme="dark"] .cms-pagination button{border:1px solid #3c463f;background:#1d231f;color:#edf1eb}
+html[data-theme="dark"] .cms-pagination button[aria-current="page"]{background:#202b25;color:#f1f4ef;border-color:#202b25}
+html[data-theme="dark"] .portfolio-item>p{color:#b1bcb3}
+html[data-theme="dark"] .cms-share button,html[data-theme="dark"] .cms-share a{color:#edf1eb}
+html[data-theme="dark"] .cms-share button:hover,html[data-theme="dark"] .cms-share a:hover{background:#1d231f}
+html[data-theme="dark"] .cms-section-remove{border:1px solid #3c463f;background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] .cms-keyword-colors button{border:1px solid #3c463f;background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] .cms-related .cms-sprite{background-color:transparent}
+html[data-theme="dark"] .cms-related img{background-color:#1d231f}
+html[data-theme="dark"] body[data-page="portfolios"] .portfolio-cover{background:#1d231f;border:1px solid #3c463f}

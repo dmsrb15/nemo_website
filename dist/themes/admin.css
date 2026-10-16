@@ -1,0 +1,137 @@
+html[data-theme="dark"]{--ink:#edf1eb;--muted:#b1bcb3;--line:#3c463f;--paper:#1d231f}
+html[data-theme="dark"] body{background:var(--paper);color:var(--ink)}
+html[data-theme="dark"] a{color:inherit}
+html[data-theme="dark"] button{border:0;color:inherit}
+html[data-theme="dark"] .brand span{background:var(--yellow)}
+html[data-theme="dark"] .eyebrow{color:var(--muted)}
+html[data-theme="dark"] .auth-card{background:#1d231f;border:1px solid var(--line)}
+html[data-theme="dark"] .auth-card>p{color:var(--muted)}
+html[data-theme="dark"] input,html[data-theme="dark"] textarea,html[data-theme="dark"] select{background:#1d231f;border:1px solid #3c463f;color:var(--ink)}
+html[data-theme="dark"] input:focus,html[data-theme="dark"] textarea:focus,html[data-theme="dark"] select:focus{border-color:#3c463f}
+html[data-theme="dark"] .primary{background:var(--yellow)}
+html[data-theme="dark"] .primary:hover{background:#f4e181}
+html[data-theme="dark"] .secondary{background:#1d231f;border:1px solid #3c463f}
+html[data-theme="dark"] .quiet{background:none}
+html[data-theme="dark"] .danger{background:none;color:#ed9c8b}
+html[data-theme="dark"] .auth-card>.quiet,html[data-theme="dark"] .auth-card>.back,html[data-theme="dark"] .auth-card>#owner-login{color:#b1bcb3}
+html[data-theme="dark"] .auth-card .error{color:#ed9c8b}
+html[data-theme="dark"] .error{color:#ed9c8b}
+html[data-theme="dark"] .sidebar{background:#1d231f;border-right:1px solid var(--line)}
+html[data-theme="dark"] .sidebar-caption{color:var(--muted)}
+html[data-theme="dark"] .sidebar nav button{background:transparent}
+html[data-theme="dark"] .sidebar nav button.active{background:#1d231f}
+html[data-theme="dark"] .sidebar nav button span{color:var(--muted)}
+html[data-theme="dark"] .sidebar-bottom>span{color:var(--muted)}
+html[data-theme="dark"] .sidebar-bottom button{background:none;color:var(--muted)}
+html[data-theme="dark"] .workspace-header p{color:var(--muted)}
+html[data-theme="dark"] .search input{background:#1d231f}
+html[data-theme="dark"] .post-card{background:#1d231f;border:1px solid var(--line)}
+html[data-theme="dark"] .post-card .cover{background:#1d231f}
+html[data-theme="dark"] .cover-placeholder{color:#b1bcb3}
+html[data-theme="dark"] .post-card .meta{color:var(--muted)}
+html[data-theme="dark"] .badge{background:#1d231f;color:#b1bcb3}
+html[data-theme="dark"] .badge.published{background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] .badge.changed{background:#1d231f;color:#b1bcb3}
+html[data-theme="dark"] .empty{color:var(--muted)}
+html[data-theme="dark"] .editor-toolbar{border-bottom:1px solid var(--line)}
+html[data-theme="dark"] .editor-toolbar>span{color:var(--muted)}
+html[data-theme="dark"] .field-hint{color:var(--muted)}
+html[data-theme="dark"] .editor-settings>section{background:#1d231f;border:1px solid var(--line)}
+html[data-theme="dark"] .upload-button{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .photo{background:#1d231f;border:1px solid var(--line)}
+html[data-theme="dark"] .photo button{background:none;color:#b1bcb3}
+html[data-theme="dark"] .photo.cover-selected{border-color:#3c463f}
+html[data-theme="dark"] .photo.cover-selected .choose-cover{color:#86d6bb}
+html[data-theme="dark"] dialog{border:0;background:#1d231f;color:var(--ink)}
+html[data-theme="dark"] dialog::backdrop{background:#20251d66}
+html[data-theme="dark"] .preview-close{background:none}
+html[data-theme="dark"] #preview-content .lead{color:var(--muted)}
+html[data-theme="dark"] #toast{background:#30372b;color:#f1f4ef}
+@media(max-width:760px){html[data-theme="dark"] .sidebar{border:0;border-bottom:1px solid var(--line)}
+}
+html[data-theme="dark"] .post-open{background:transparent;color:inherit}
+html[data-theme="dark"] .post-author{color:#b1bcb3}
+html[data-theme="dark"] .order-controls button{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .composer-tools{background:#1d231feb;border:1px solid #3c463f}
+html[data-theme="dark"] .composer-tools>span{color:#b1bcb3}
+html[data-theme="dark"] .composer-tools>button{background:#1d231f;border:1px solid #3c463f}
+html[data-theme="dark"] #document-canvas{background:#1d231f;border:1px solid #3c463f}
+html[data-theme="dark"] .media-library button{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .media-library img,html[data-theme="dark"] .media-library .atlas{background:#1d231f}
+html[data-theme="dark"] .account-row{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .account-row p{color:#b1bcb3}
+html[data-theme="dark"] .account-row>span{color:#b1bcb3}
+html[data-theme="dark"] .account-add{background:#1d231f;border:1px solid #3c463f}
+html[data-theme="dark"] .post-card .atlas{background:#1d231f}
+html[data-theme="dark"] .inline-font-tools button{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .composer-tools #selection-status{color:#b1bcb3}
+html[data-theme="dark"] .final-preview-dialog>header{background:#1d231f;border-bottom:1px solid #3c463f}
+html[data-theme="dark"] .final-preview-dialog p{color:#b1bcb3}
+html[data-theme="dark"] .final-preview-dialog header button{background:#1d231f;border:1px solid #3c463f}
+html[data-theme="dark"] .final-preview-dialog header button[aria-pressed="true"]{background:#1d231f}
+html[data-theme="dark"] .preview-stage{background:#1d231f}
+html[data-theme="dark"] .preview-stage iframe{border:0;background:#1d231f}
+html[data-theme="dark"] .cms-contact{background:#1d231f!important}
+html[data-theme="dark"]{--ink:#86d6bb;--muted:#86d6bb;--line:#3c463f;--paper:#1d231f}
+html[data-theme="dark"] body{color:var(--ink)}
+html[data-theme="dark"] .workspace-header p,html[data-theme="dark"] .post-author,html[data-theme="dark"] .field-hint{color:#86d6bb}
+html[data-theme="dark"] .sidebar nav button.active{background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] .post-open .cover{background:#1d231f}
+html[data-theme="dark"] .badge{color:#86d6bb;background:#1d231f}
+html[data-theme="dark"] .badge.published{background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] .post-card{border-color:#3c463f}
+html[data-theme="dark"] .editor-toolbar{background:#1d231f;border-color:#3c463f}
+html[data-theme="dark"] .composer-tools{background:#1d231f;border-color:#3c463f}
+html[data-theme="dark"] .composer-tools button,html[data-theme="dark"] .inline-font-tools button{color:#86d6bb}
+html[data-theme="dark"] .composer-tools #selection-status{color:#86d6bb}
+html[data-theme="dark"] .editor-settings>section{border-color:#3c463f}
+html[data-theme="dark"] .editor-settings h2{color:#86d6bb}
+html[data-theme="dark"] .editor-settings label{color:#86d6bb}
+html[data-theme="dark"] .style-suggestions button,html[data-theme="dark"] #related-selected button{background:#1d231f;border:1px solid #3c463f;color:#86d6bb}
+html[data-theme="dark"] .style-suggestions button span{color:#86d6bb}
+html[data-theme="dark"] #related-choices .check{border-bottom:1px solid #3c463f}
+html[data-theme="dark"] #document-canvas{border-color:#3c463f}
+html[data-theme="dark"] .cms-editing [contenteditable]{border:1px dashed #3c463f;background:#1d231f}
+html[data-theme="dark"] .cms-editing [contenteditable]:hover{border-color:#316495;background:#1d231f}
+html[data-theme="dark"] .cms-editing [contenteditable]:focus{border-color:#265d94}
+html[data-theme="dark"] .cms-editing .cms-block{border-color:#3c463f;background:#1d231f}
+html[data-theme="dark"] .cms-editing .cms-block.active{border-color:#2f699b;background:#1d231f}
+html[data-theme="dark"] .cms-block-tools{color:#86d6bb}
+html[data-theme="dark"] .cms-block-tools button{border-color:#3c463f;color:#86d6bb}
+html[data-theme="dark"] .hero-grip{background:#1d231f;border:1px solid #3c463f;color:#86d6bb}
+html[data-theme="dark"] .hero-drop-tray{background:#1d231f;border:1px dashed #3c463f}
+html[data-theme="dark"] .hero-drop-tray span{color:#86d6bb}
+html[data-theme="dark"] .hero-drop-tray button{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .media-library button>span{background:#1d231f}
+html[data-theme="dark"] .primary{background:#ffdf65;color:#86d6bb}
+html[data-theme="dark"] .secondary{border-color:#3c463f;color:#86d6bb}
+html[data-theme="dark"] input,html[data-theme="dark"] textarea,html[data-theme="dark"] select{color:#86d6bb;border-color:#3c463f}
+html[data-theme="dark"] input:focus,html[data-theme="dark"] textarea:focus,html[data-theme="dark"] select:focus{border-color:#2f6490}
+html[data-theme="dark"] .final-preview-dialog .preview-stage{background:#1d231f}
+html[data-theme="dark"] .post-dates{color:#86d6bb}
+html[data-theme="dark"] .post-author{color:#86d6bb}
+html[data-theme="dark"] .composer-tools #expand-editor{background:#1d231f}
+html[data-theme="dark"] .inline-font-tools{border-left:1px solid #3c463f}
+html[data-theme="dark"] .composer-tools+p.field-hint{color:#b1bcb3}
+html[data-theme="dark"] .editor-settings{border:1px solid #3c463f;background:#1d231f}
+html[data-theme="dark"] .editor-settings>details{border-bottom:1px solid #3c463f}
+html[data-theme="dark"] .editor-settings>details:last-child{border:0}
+html[data-theme="dark"] .editor-settings summary{color:#86d6bb}
+html[data-theme="dark"] .editor-settings details>section{border:0;background:#1d231f}
+html[data-theme="dark"] .cms-editing .cms-block{border-color:#3c463f}
+html[data-theme="dark"] .cms-editing [contenteditable]{border-color:#3c463f}
+html[data-theme="dark"] .cms-editing [contenteditable]:hover{background:#1d231f}
+html[data-theme="dark"] .cms-cover-hint{background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] .cms-video-change{background:#1d231f;border:1px solid #3c463f;color:#86d6bb}
+html[data-theme="dark"] .cms-video-empty{background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] #image-dialog #image-settings{border:0}
+@media(max-width:760px){html[data-theme="dark"] .inline-font-tools{border:0}
+}
+html[data-theme="dark"] .cms-block-tools{color:#86d6bb}
+html[data-theme="dark"] .cms-block-tools button{color:#86d6bb;border-color:#3c463f;background:#1d231f}
+html[data-theme="dark"] #related-preview{color:#86d6bb}
+html[data-theme="dark"] .cms-section-remove:hover{background:#1d231f;color:#86d6bb}
+html[data-theme="dark"] .inline-font-tools #text-color{border-bottom:3px solid #3c463f}
+html[data-theme="dark"] #related-preview a{color:#86d6bb}
+html[data-theme="dark"] #related-preview a:hover{color:#86d6bb}
+html[data-theme="dark"] #related-preview .related-preview-separator{color:#b1bcb3}
