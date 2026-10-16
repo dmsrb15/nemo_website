@@ -3,7 +3,7 @@ html[data-theme="dark"] .shared-footer-legal{color:#b1bcb3}
 html[data-theme="dark"] .shared-close{background:#1d231f}
 html[data-theme="dark"] .shared-eyebrow{color:#b1bcb3}
 html[data-theme="dark"] .shared-dialog-body p{color:#b1bcb3}
-html[data-theme="dark"] .office-art{background:url('assets/office-3d.png') center/contain no-repeat!important}
+html[data-theme="dark"] .office-art{background:url("/assets/office-3d.png") center/contain no-repeat!important}
 html[data-theme="dark"] .field-help{color:#b1bcb3}
 html[data-theme="dark"] #address-search-panel{border:1px solid #3c463f;background:#1d231f}
 html[data-theme="dark"] #address-search-status{color:#b1bcb3}
@@ -15,7 +15,7 @@ html[data-theme="dark"] .consent-row label span{color:#b1bcb3}
 html[data-theme="dark"] .consent-row button{color:#b1bcb3;border-bottom:1px solid #3c463f}
 html[data-theme="dark"] .consent-summary{color:#b1bcb3}
 html[data-theme="dark"] .header,html[data-theme="dark"] .header.at-end,html[data-theme="dark"] .page-header{background:linear-gradient(180deg,#1d231fcc 0%,#1d231f94 58%,#1d231f38 100%)!important;border-bottom:1px solid #3c463f2e}
-html[data-theme="dark"] .popup-art{background:url('assets/popup-3d.png') center/contain no-repeat!important}
+html[data-theme="dark"] .popup-art{background:url("/assets/popup-3d.png") center/contain no-repeat!important}
 html[data-theme="dark"] .services-dropdown{background:#1d231ff5;border-top:1px solid #3c463f55}
 html[data-theme="dark"] .services-dropdown-grid button{border:0;background:none}
 html[data-theme="dark"] .services-dropdown-grid strong{color:#edf1eb}
@@ -25,7 +25,7 @@ html[data-theme="dark"] .optional-services{border:0;background:#1d231f}
 html[data-theme="dark"] .optional-services .option-help{color:#b1bcb3}
 html[data-theme="dark"] .services-dropdown-grid a:hover strong{color:#86d6bb}
 html[data-theme="dark"] .services-trigger[aria-current="page"]{color:#86d6bb}
-html[data-theme="dark"] .atlas.a-home{background:url('assets/home-3d-v2.png') center/contain no-repeat!important}
+html[data-theme="dark"] .atlas.a-home{background:url("/assets/home-3d-v2.png") center/contain no-repeat!important}
 html[data-theme="dark"] .header,html[data-theme="dark"] .header.at-end,html[data-theme="dark"] .page-header{background:transparent!important;border:0!important}
 html[data-theme="dark"] .header::before,html[data-theme="dark"] .page-header::before{background:linear-gradient(180deg,#1d231fb8,#1d231f5c 60%,#1d231f00)}
 html[data-theme="dark"] .header nav,html[data-theme="dark"] .header.at-end nav,html[data-theme="dark"] .page-header nav{background:transparent!important;border:0!important}

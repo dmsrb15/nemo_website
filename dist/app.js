@@ -41,20 +41,29 @@ function updateProcess() {
   const steps = $$('.process-step', process);
   const buttons = $$('[data-process]', process);
   const progress = clamp(-process.getBoundingClientRect().top / Math.max(1, process.offsetHeight - innerHeight));
-  const position = Math.min(3, progress * 3.4);
+  const position = Math.min(3, progress * 4.2);
   const active = Math.round(position);
+  const overview = $('.process-overview', process);
+  const overviewFade = reduce.matches ? 1 : clamp((progress - .82) / .12);
+  const overviewActive = overviewFade > .5;
+  overview.hidden = overviewFade === 0;
+  overview.inert = !overviewActive;
+  overview.style.opacity = overviewFade;
+  overview.setAttribute('aria-hidden', String(!overviewActive));
+  process.classList.toggle('showing-overview', overviewActive);
+  $('.process-nav',process).inert = overviewActive;
   steps.forEach((step, index) => {
     const copy = $('.process-copy', step);
     if (reduce.matches) { step.removeAttribute('style'); copy.style.removeProperty('opacity'); step.inert = false; step.removeAttribute('aria-hidden'); return; }
     const delta = position - index;
-    const opacity = clamp(1 - Math.abs(delta));
+    const opacity = clamp(1 - Math.abs(delta)) * (1 - overviewFade);
     step.style.opacity = opacity;
     copy.style.opacity = opacity > 0 ? clamp(1 - Math.abs(delta) * 2.2) / opacity : 0;
     step.style.visibility = opacity > .001 ? 'visible' : 'hidden';
     step.style.setProperty('--step-shift', (delta * -48) + 'px');
     step.style.setProperty('--art-scale', 1 - Math.min(1,Math.abs(delta)) * .12);
-    step.inert = index !== active;
-    step.setAttribute('aria-hidden', String(index !== active));
+    step.inert = index !== active || overviewActive;
+    step.setAttribute('aria-hidden', String(index !== active || overviewActive));
   });
   buttons.forEach((button,index) => {
     if (index === active) button.setAttribute('aria-current','step'); else button.removeAttribute('aria-current');
@@ -387,7 +396,7 @@ $$('.review-board').forEach(board => {
 $$('[data-process]').forEach((button,index,buttons) => {
   function selectStep() {
     const process = $('.process');
-    const top = reduce.matches ? $$('.process-step')[index].getBoundingClientRect().top + scrollY : process.getBoundingClientRect().top + scrollY + (process.offsetHeight - innerHeight) * index / 3.4;
+    const top = reduce.matches ? $('.process-overview').getBoundingClientRect().top + scrollY : process.getBoundingClientRect().top + scrollY + (process.offsetHeight - innerHeight) * index / 4.2;
     scrollTo({top,behavior:reduce.matches ? 'instant':'smooth'});
   }
   button.addEventListener('click',selectStep);
@@ -397,4 +406,12 @@ $$('[data-process]').forEach((button,index,buttons) => {
     const target = event.key === 'Home' ? 0 : event.key === 'End' ? 3 : (index + (event.key === 'ArrowRight' ? 1 : -1) + 4) % 4;
     buttons[target].focus({preventScroll:true}); buttons[target].click();
   });
+});
+const processOverview=$('.process-overview');
+processOverview.querySelectorAll('details').forEach(detail=>detail.addEventListener('toggle',()=>{
+ if(detail.open)processOverview.querySelectorAll('details').forEach(other=>{if(other!==detail)other.open=false;});
+}));
+$('[data-process-restart]').addEventListener('click',()=>{
+ const top=$('.process').getBoundingClientRect().top+scrollY;
+ scrollTo({top,behavior:reduce.matches?'instant':'smooth'});
 });

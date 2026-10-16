@@ -34,7 +34,14 @@ function declarations(body){
   else if(/^border(?:-(?:top|bottom|left|right))?(?:-color)?$/.test(key)||key==='outline-color')kind='border';
   else if(/^--(?:paper|ink|muted|line|(?:about|service|res)-(?:muted|line|soft))$/.test(key))kind=/ink|muted/.test(key)?'text':/line/.test(key)?'border':'surface';
   if(!kind)continue;
-  const next=value.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)|\bwhite\b|\bblack\b/gi,t=>shade(t,kind));
+  // Companion CSS lives in /themes/, so URLs must keep the original root-CSS
+  // base. Protect URLs from color replacement (including names such as white).
+  const assets=[];
+  const protectedValue=value.replace(/url\(\s*(['"]?)([^'"()]+)\1\s*\)/gi,(whole,quote,href)=>{
+   const absolute=/^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(href)?href:path.posix.normalize('/'+href);
+   assets.push('url("'+absolute+'")');return '__NEMO_ASSET_'+(assets.length-1)+'__';
+  });
+  const next=protectedValue.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)|\bwhite\b|\bblack\b/gi,t=>shade(t,kind)).replace(/__NEMO_ASSET_(\d+)__/g,(_,i)=>assets[+i]);
   // Retain transparent/inherited later declarations as well, so the original
   // cascade can still cancel an earlier surface or foreground color.
   result.push(key+':'+next);
@@ -59,9 +66,9 @@ for(const name of fs.readdirSync(dist).filter(n=>n.endsWith('.css')&&n!=='theme.
 for(const name of fs.readdirSync(dist).filter(n=>n.endsWith('.html'))){
  const file=path.join(dist,name);let html=fs.readFileSync(file,'utf8');
  html=html.replace(/<link\b[^>]*data-nemo-theme[^>]*>/gi,'').replace(/<script\b[^>]*data-nemo-theme[^>]*>[\s\S]*?<\/script>/gi,'');
- html=html.replace(/(<meta charset="utf-8">)/i,'$1<script data-nemo-theme src="/theme.js?v=20261016-dark-1"></script>');
- html=html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi,tag=>{const href=tag.match(/href="([^"?]+)(?:\?[^" ]*)?"/i)?.[1],base=href&&path.basename(href);return base&&fs.existsSync(path.join(out,base))?tag+'<link data-nemo-theme rel="stylesheet" href="/themes/'+base+'?v=20261016-dark-1">':tag;});
- if(!/href="\/?cms-render\.css/.test(html))html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/themes/cms-render.css?v=20261016-dark-1"></head>');
- html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/theme.css?v=20261016-dark-1"></head>');
+ html=html.replace(/(<meta charset="utf-8">)/i,'$1<script data-nemo-theme src="/theme.js?v=20261016-dark-2"></script>');
+ html=html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi,tag=>{const href=tag.match(/href="([^"?]+)(?:\?[^" ]*)?"/i)?.[1],base=href&&path.basename(href);return base&&fs.existsSync(path.join(out,base))?tag+'<link data-nemo-theme rel="stylesheet" href="/themes/'+base+'?v=20261016-dark-2">':tag;});
+ if(!/href="\/?cms-render\.css/.test(html))html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/themes/cms-render.css?v=20261016-dark-2"></head>');
+ html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/theme.css?v=20261016-dark-2"></head>');
  fs.writeFileSync(file,html);
 }

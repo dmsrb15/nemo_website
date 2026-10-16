@@ -38,3 +38,10 @@ html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::pla
 html[data-theme="dark"] :is(a,button,input,select,textarea):focus-visible{outline-color:#feeb8f}
 @media(max-width:760px){.theme-actions{gap:7px}.theme-actions .theme-toggle{padding:9px;min-width:40px;min-height:40px}.theme-actions .theme-toggle span{display:none}.theme-actions>.button{padding:12px 15px;font-size:12px;gap:8px}.page-header,.header{gap:10px!important}html[data-theme="dark"] .header.menu-open nav,html[data-theme="dark"] .page-header.menu-open nav{background:rgba(20,26,22,.97)!important}.theme-toggle-fixed{right:14px;bottom:14px}}
 @media(prefers-reduced-motion:reduce){.theme-toggle{transition:none}}
+
+/* Dark-mode map pins remain distinct over both the map and its surroundings. */
+html[data-theme="dark"] .pin-dot{width:12px;height:12px;background:#ffdd55;border:2px solid #19251e;box-shadow:0 0 0 5px #ffdd5538}
+html[data-theme="dark"] .review-pin:hover .pin-dot,html[data-theme="dark"] .review-pin:focus-visible .pin-dot,html[data-theme="dark"] .review-pin.selected .pin-dot{background:#ffec98;box-shadow:0 0 0 8px #ffdd5555}
+html[data-theme="dark"] .pin-label{top:7px;color:#f5edcf;background:#19251ef2;border:1px solid #566347;border-radius:5px;padding:3px 6px;font-weight:650}
+html[data-theme="dark"] .review-pin.selected .pin-label{color:#ffdd55;border-color:#b79b43}
+html[data-theme="dark"] .map-review-region{color:#ffdd55}
