@@ -2,6 +2,7 @@ import render from '../dist/cms-render.js';
 import rich from '../dist/cms-richtext.js';
 import {extensions} from './extensions.mjs';
 import legacy from './legacy.mjs';
+import {readLanding,saveLanding} from './landing.mjs';
 const encoder=new TextEncoder(),COOKIE='__Host-nemo_admin',TTL=12*60*60*1000;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const json=(value,status=200,extra={})=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json;charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...extra}});
@@ -107,6 +108,16 @@ export default {async fetch(request,env){
   }
   if(path==='/api/admin/logout'&&request.method==='POST'){const token=request.headers.get('cookie')?.split(';').map(s=>s.trim()).find(s=>s.startsWith(COOKIE+'='))?.slice(COOKIE.length+1);if(token)await env.DB.prepare('DELETE FROM cms_sessions WHERE token=?').bind(await digest(token)).run();return json({ok:true},200,{'Set-Cookie':cookie('',0)});}
   const extended=await extra.routes(path,request,env);if(extended)return extended;
+  if(path==='/api/admin/landing'){
+   const user=await requireAdmin(request,env);
+   if(request.method==='GET')return json(await readLanding(env));
+   if(request.method==='PUT')return json(await saveLanding(env,await readJSON(request),user));
+   return json({error:'허용되지 않은 요청입니다.'},405);
+  }
+  if(path==='/api/public/landing.js'&&request.method==='GET'){
+   const [landing,content]=await Promise.all([readLanding(env),publicContent(env)]);
+   return new Response('window.NEMO_LANDING_STATE='+JSON.stringify({config:landing.config,projects:content.projects}).replace(/</g,'\\u003c')+';',{headers:{'Content-Type':'application/javascript;charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
+  }
   if(path==='/api/admin/posts'&&request.method==='GET'){const user=await requireAdmin(request,env);await extra.cleanup(env);const rows=await env.DB.prepare('SELECT p.*,a.username AS author,e.username AS editor FROM cms_posts p LEFT JOIN cms_admin a ON a.id=p.author_id LEFT JOIN cms_admin e ON e.id=p.editor_id ORDER BY p.sort_order ASC,p.created DESC').all();return json({posts:rows.results.map(p=>({...p,author_id:user.role==='master'?p.author_id:undefined,editor_id:user.role==='master'?p.editor_id:undefined,author:p.author,editor:p.editor,payload:JSON.parse(p.payload),livePayload:p.published?JSON.parse(p.published):null,published:undefined,hasUnpublishedChanges:p.status==='published'&&p.payload!==p.published})),retentionDays:30});}
   if(/^\/api\/admin\/posts(?:\/[A-Za-z0-9:_-]+)?$/.test(path)&&request.method==='POST'){
    const user=await requireAdmin(request,env),data=await readJSON(request),existingId=path.split('/')[4],existing=existingId?await env.DB.prepare('SELECT * FROM cms_posts WHERE id=?').bind(existingId).first():null;

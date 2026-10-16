@@ -10,9 +10,12 @@ let upwardMenu = false;
 
 const opening = $('.opening-story');
 const portfolio = $('.portfolio');
-const cards = $$('.project-card');
-const cardDelays = cards.map(() => .34 + Math.random() * .07);
-const cardOffsets = cards.map(() => 45 + Math.random() * 75);
+let cards=[],cardDelays=[],cardOffsets=[];
+function renderLandingProjects(category='전체'){
+ window.NEMO_LANDING_VIEW.renderProjects(category);cards=$$('.project-card');cardDelays=cards.map(()=>.34+Math.random()*.07);cardOffsets=cards.map(()=>45+Math.random()*75);
+ cards.filter(card=>card.dataset.project).forEach(card=>card.addEventListener('click',()=>{location.href='portfolio.html?project='+encodeURIComponent(card.dataset.project);}));
+}
+renderLandingProjects();
 const serviceChoices=[["residential","주거","a-home","취향은 선명하게, 생활은 편안하게.","취향과 생활을 듣고, 동선과 수납을 편안하게 바꿔요.","02-01"],["commercial","상업","a-cafe","브랜드는 또렷하게, 쓰임은 효율적으로.","브랜드의 첫인상부터 손님의 경험과 동선까지 연결해요.","03-01"],["office","사무","office-art","집중은 깊게, 협업은 자연스럽게.","팀의 일하는 방식에 맞춰 집중·회의·휴식의 균형을 맞춰요.","03-03"],["popup","팝업","popup-art","짧은 만남에도, 오래 남는 브랜드.","전시와 체험, 판매의 흐름에 브랜드의 이야기를 담아요.","03-05"]];
 let selectedService=0,manualServiceScene=null;
 function selectService(index){
@@ -265,7 +268,7 @@ function setFilter(category) {
   const strip = $('.portfolio-strip');
   strip.classList.add('filter-changing');
   filterTimer = setTimeout(() => {
-    cards.forEach(card => card.hidden = category !== '전체' && card.dataset.category !== category);
+    renderLandingProjects(category);
     strip.classList.toggle('filtered', category !== '전체');
     strip.scrollLeft = 0;
     updateStory();
@@ -280,52 +283,6 @@ function alignFilterPill() {
 addEventListener('resize', alignFilterPill);
 alignFilterPill();
 $$('[data-filter]').forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
-$$('[data-project]').forEach(card => card.addEventListener('click', () => { location.href = 'portfolio.html?project=' + encodeURIComponent(card.dataset.project); }));
-// Fictional review content for the user-approved map preview.
-const regionalReviews = {
-  seoul: { region: '서울 · 주거 공간', person: '김** 님', quote: '좋아하는 색과 소재를 하나씩 이야기했는데, 완성된 공간에 제 취향이 자연스럽게 담겼어요.' },
-  gangneung: { region: '강릉 · 카페', person: '박** 님', quote: '창밖 풍경과 실내 분위기가 이어져요. 손님들이 편하게 머무는 모습을 보면 기분이 좋아요.' },
-  daejeon: { region: '대전 · 주거 공간', person: '이** 님', quote: '수납과 동선을 함께 바꾸니 집이 훨씬 편해졌어요. 같은 면적인데도 더 넓게 느껴져요.' },
-  daegu: { region: '대구 · 브랜드 매장', person: '정** 님', quote: '작은 매장 안에서도 우리 브랜드의 색이 또렷하게 보여요. 처음 들어오는 순간부터 분위기가 달라졌어요.' },
-  busan: { region: '부산 · 주거 공간', person: '최** 님', quote: '빛이 들어오는 방향까지 생각해주셨어요. 아침마다 거실에 앉아 있는 시간이 즐거워졌어요.' },
-  gwangju: { region: '광주 · 작업 공간', person: '한** 님', quote: '작업에 집중하는 자리와 쉬는 자리를 나누니 하루의 리듬이 더 좋아졌어요.' },
-  jeju: { region: '제주 · 숙박 공간', person: '오** 님', quote: '자연스러운 소재와 따뜻한 조명 덕분에, 잠깐 머물러도 오래 기억되는 공간이 됐어요.' }
-};
-const reviewPins = $$('.review-pin');
-const mapPopup = $('#map-review-popup');
-let pinnedReview = null;
-let shownReview = null;
-function showRegionalReview(pin) {
-  const review = regionalReviews[pin.dataset.review];
-  if (!review) return;
-  shownReview = pin;
-  $('.map-review-region').textContent = review.region;
-  $('.map-review-person').textContent = review.person;
-  $('.map-review-quote').textContent = '“' + review.quote + '”';
-  mapPopup.hidden = false;
-  reviewPins.forEach(item => { item.classList.toggle('selected', item === pin); item.setAttribute('aria-expanded', String(item === pin)); });
-}
-function hideRegionalReview() {
-  shownReview = null;
-  mapPopup.hidden = true;
-  reviewPins.forEach(pin => { pin.classList.remove('selected'); pin.setAttribute('aria-expanded', 'false'); });
-}
-reviewPins.forEach(pin => {
-  pin.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') showRegionalReview(pin); });
-  pin.addEventListener('pointerleave', () => { if (!pinnedReview && document.activeElement !== pin) hideRegionalReview(); });
-  pin.addEventListener('focus', () => showRegionalReview(pin));
-  pin.addEventListener('blur', () => { if (!pinnedReview) hideRegionalReview(); });
-  pin.addEventListener('click', () => {
-    pinnedReview = pinnedReview === pin ? null : pin;
-    if (pinnedReview) showRegionalReview(pin); else hideRegionalReview();
-  });
-});
-document.addEventListener('pointerdown', event => {
-  if (!event.target.closest('.review-pin,.map-review-popup')) { pinnedReview = null; hideRegionalReview(); }
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') { pinnedReview = null; hideRegionalReview(); }
-});
 const koreanClock = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
 function updateKoreanClock() {
   const now = new Date();
@@ -338,8 +295,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) upda
 
 const regionTabs = $$('.review-region-tabs [role="tab"]');
 function selectReviewRegion(tab) {
-  pinnedReview = null;
-  hideRegionalReview();
+  window.NEMO_LANDING_VIEW.hideReview();
   regionTabs.forEach(item => {
     const selected = item === tab;
     item.setAttribute('aria-selected', String(selected));

@@ -16,6 +16,17 @@ test('CMS username login, bootstrap persistence, drafts, uploads and blocked reg
   assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM cms_admin').first()).n,1);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM cms_posts').first()).n,17);
   assert.equal((await req('/api/admin/login','POST',{username,password:'wrong'})).status,401);
   let response=await req('/api/admin/login','POST',{username,password});assert.equal(response.status,200);let cookie=response.headers.get('Set-Cookie').split(';')[0],auth={Cookie:cookie};
+  assert.equal((await req('/api/admin/landing')).status,401);
+  const landing=(await (await req('/api/admin/landing','GET',undefined,auth)).json());assert.equal(landing.revision,0);
+  assert.equal((await req('/api/admin/landing','PUT',{expectedRevision:0,config:landing.config})).status,401);
+  assert.equal((await req('/api/admin/landing','PUT',{expectedRevision:0,config:landing.config},{...auth,Origin:'https://evil.test'})).status,403);
+  const badLanding={...landing.config,domestic:[{...landing.config.domestic[0],region:'not-a-region'}]};
+  assert.equal((await req('/api/admin/landing','PUT',{expectedRevision:0,config:badLanding},auth)).status,400);
+  const editedLanding={...landing.config,totalProjects:'321+',marquee:[{text:'<img src=x onerror=alert(1)>',label:'새 문구'}],overseas:[{id:'new-overseas',country:'일본',title:'공간 A',description:'새 프로젝트'}]};
+  let landingResponse=await req('/api/admin/landing','PUT',{expectedRevision:0,config:editedLanding},auth);assert.equal(landingResponse.status,200);assert.equal((await landingResponse.json()).revision,1);
+  assert.equal((await req('/api/admin/landing','PUT',{expectedRevision:0,config:editedLanding},auth)).status,409);
+  assert.equal((await (await req('/api/admin/landing','GET',undefined,auth)).json()).config.totalProjects,'321+');
+  const landingCode=await (await req('/api/public/landing.js')).text();assert.ok(!landingCode.includes('<img'));const landingCtx={window:{}};vm.runInNewContext(landingCode,landingCtx);assert.equal(landingCtx.window.NEMO_LANDING_STATE.config.overseas[0].country,'일본');assert.equal(landingCtx.window.NEMO_LANDING_STATE.projects.length,11);assert.equal(landingCtx.window.NEMO_LANDING_STATE.revision,undefined);
   assert.ok(response.headers.get('Set-Cookie').includes('HttpOnly'));assert.ok(response.headers.get('Set-Cookie').includes('Secure'));
   assert.equal((await (await req('/api/admin/session','GET',undefined,auth)).json()).username,username);
   for(const path of ['/api/admin/setup','/api/admin/register','/api/admin/request-code','/api/admin/recover'])assert.equal((await req(path,'POST',{username,password},owner)).status,403);

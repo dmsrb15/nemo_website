@@ -121,3 +121,16 @@ dialog{border:0;border-radius:28px;padding:45px;width:min(600px,calc(100% - 32px
 .no-motion .process-overview-heading button{display:none}
 @media(max-width:760px){.process{height:480vh}.process-overview-heading{gap:12px;margin-bottom:12px}.process-overview-heading p{font-size:11px}.process-overview-heading button{font-size:10px}.process-overview summary{padding:16px 0;font-size:20px}.process-overview h3{font-size:15px}.process-overview details p{font-size:12px}.process-overview details>div{padding-bottom:16px}.process-overview details a{margin-top:10px;padding:9px 13px;font-size:11px}}
 @media(prefers-reduced-motion:reduce){.process-overview summary>span{transition:none}}
+
+/* A bounded random selection ends with a direct portfolio destination. */
+.project-all .project-image{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:22px;padding:38px;background:#e5e8e0;border:1px solid var(--line);color:var(--ink)}
+.project-all .project-image>span:first-child{font-size:13px;color:var(--muted)}
+.project-all .project-image strong{font-size:clamp(25px,3vw,38px);line-height:1.35;letter-spacing:-.04em;text-wrap:balance}
+.project-all .project-image>span:last-child{font-size:36px}
+.project-all-caption{display:block;margin-top:19px;font-size:14px;font-weight:650}
+#reviews-title{white-space:pre-line}
+.pin-count{position:absolute;right:-1px;top:-1px;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center;border-radius:12px;background:var(--yellow);color:#222;font-size:9px;font-weight:800;border:1px solid #574d2b}
+.map-review-controls{display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:12px;font-size:11px;color:var(--muted)}
+.map-review-controls button{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:50%;color:var(--ink)}
+.overseas-project-list p{margin-top:12px;font-size:14px;line-height:1.7;color:var(--muted)}
+@media(max-width:760px){.project-all .project-image{padding:24px;gap:15px}.project-all .project-image strong{font-size:25px}.project-all .project-image>span:first-child{font-size:11px}.pin-count{right:0;top:0}}

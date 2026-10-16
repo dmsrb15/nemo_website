@@ -135,3 +135,14 @@ html[data-theme="dark"] .inline-font-tools #text-color{border-bottom:3px solid #
 html[data-theme="dark"] #related-preview a{color:#86d6bb}
 html[data-theme="dark"] #related-preview a:hover{color:#86d6bb}
 html[data-theme="dark"] #related-preview .related-preview-separator{color:#b8b8b8}
+html[data-theme="dark"] .landing-save-bar{background:#111111;border:1px solid var(--line)}
+html[data-theme="dark"] .landing-save-bar p{color:var(--muted)}
+html[data-theme="dark"] #landing-status{color:var(--muted)}
+html[data-theme="dark"] .landing-settings-panel{background:#111111;border:1px solid var(--line)}
+html[data-theme="dark"] .landing-settings-panel>summary>span{color:var(--muted)}
+html[data-theme="dark"] .landing-settings-panel input,html[data-theme="dark"] .landing-settings-panel select,html[data-theme="dark"] .landing-settings-panel textarea{border:1px solid var(--line)}
+html[data-theme="dark"] .landing-rows>fieldset{border:1px solid var(--line)}
+html[data-theme="dark"] .landing-rows legend{color:var(--muted)}
+html[data-theme="dark"] .landing-row-tools button{border:1px solid var(--line)}
+html[data-theme="dark"] .landing-map-picker>button{background:#111111;border:1px solid var(--line)}
+html[data-theme="dark"] .landing-review-row{border:1px solid var(--line)}

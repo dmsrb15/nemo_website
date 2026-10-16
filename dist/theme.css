@@ -45,3 +45,5 @@ html[data-theme="dark"] .review-pin:hover .pin-dot,html[data-theme="dark"] .revi
 html[data-theme="dark"] .pin-label{top:7px;color:#f5edcf;background:#1c1c1cf2;border:1px solid #566347;border-radius:5px;padding:3px 6px;font-weight:650}
 html[data-theme="dark"] .review-pin.selected .pin-label{color:#ffdd55;border-color:#b79b43}
 html[data-theme="dark"] .map-review-region{color:#ffdd55}
+
+html[data-theme="dark"] .pin-count{background:#ffdd55;color:#222}
