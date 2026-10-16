@@ -1,17 +1,17 @@
-html[data-theme="dark"] .service-page-tabs{border-bottom:1px solid #3c463f}
-html[data-theme="dark"] .service-page-tabs a{color:#b1bcb3;background:#1d231f}
-html[data-theme="dark"] .service-page-tabs a[aria-current="page"]{background:#242b25;color:#f1f4ef}
-html[data-theme="dark"] .service-page-hero p{color:#b1bcb3}
-html[data-theme="dark"] .service-page-art{background:#1d231f}
-html[data-theme="dark"] .service-page-description{color:#b1bcb3}
-html[data-theme="dark"] .service-page-points article{background:#1d231f}
-html[data-theme="dark"] .service-page-points article>span,html[data-theme="dark"] .service-page-steps li>span{color:#b1bcb3}
-html[data-theme="dark"] .service-page-points p,html[data-theme="dark"] .service-page-steps p{color:#b1bcb3}
-html[data-theme="dark"] .service-page-steps{border-top:1px solid #3c463f}
-html[data-theme="dark"] .service-page-faq details{border-bottom:1px solid #3c463f}
-html[data-theme="dark"] .service-page-faq details:first-of-type{border-top:1px solid #3c463f}
-html[data-theme="dark"] .service-page-faq details p{color:#b1bcb3}
-html[data-theme="dark"] .about-service-grid a{background:#1d231f}
-html[data-theme="dark"] .about-service-grid a:hover{background:#1d231f}
-html[data-theme="dark"] .about-contact{background:#1d231f}
-html[data-theme="dark"] .about-contact dt{color:#b1bcb3}
+html[data-theme="dark"] .service-page-tabs{border-bottom:1px solid #393939}
+html[data-theme="dark"] .service-page-tabs a{color:#b8b8b8;background:#111111}
+html[data-theme="dark"] .service-page-tabs a[aria-current="page"]{background:#242b25;color:#f1f1f1}
+html[data-theme="dark"] .service-page-hero p{color:#b8b8b8}
+html[data-theme="dark"] .service-page-art{background:#111111}
+html[data-theme="dark"] .service-page-description{color:#b8b8b8}
+html[data-theme="dark"] .service-page-points article{background:#111111}
+html[data-theme="dark"] .service-page-points article>span,html[data-theme="dark"] .service-page-steps li>span{color:#b8b8b8}
+html[data-theme="dark"] .service-page-points p,html[data-theme="dark"] .service-page-steps p{color:#b8b8b8}
+html[data-theme="dark"] .service-page-steps{border-top:1px solid #393939}
+html[data-theme="dark"] .service-page-faq details{border-bottom:1px solid #393939}
+html[data-theme="dark"] .service-page-faq details:first-of-type{border-top:1px solid #393939}
+html[data-theme="dark"] .service-page-faq details p{color:#b8b8b8}
+html[data-theme="dark"] .about-service-grid a{background:#111111}
+html[data-theme="dark"] .about-service-grid a:hover{background:#111111}
+html[data-theme="dark"] .about-contact{background:#111111}
+html[data-theme="dark"] .about-contact dt{color:#b8b8b8}

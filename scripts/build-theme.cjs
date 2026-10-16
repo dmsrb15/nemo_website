@@ -11,18 +11,18 @@ function rgb(token){
 function shade(token,kind){
  const c=rgb(token);if(!c)return token;const [r,g,b,alpha]=c,max=Math.max(r,g,b),min=Math.min(r,g,b),light=(max+min)/510,sat=max?((max-min)/max):0;
  let hex;
- if(kind==='border')hex=light>.45?'#3c463f':token;
+ if(kind==='border')hex=light>.45?'#393939':token;
  else if(kind==='text'){
-  if(light>.9)hex='#f1f4ef';
+  if(light>.9)hex='#f1f1f1';
   else if(sat>.25&&g>r*1.1)hex='#86d6bb';
   else if(sat>.45&&r>g*1.2)hex='#ed9c8b';
-  else if(light<.30)hex='#edf1eb';
-  else hex='#b1bcb3';
+  else if(light<.30)hex='#eeeeee';
+  else hex='#b8b8b8';
  }else{
   if(light<.40)return token;
   // Keep brand yellow buttons and intentionally colored accents.
   if(r>210&&g>160&&b<165&&sat>.3)return token;
-  hex=light>.89?'#1d231f':light>.7?'#252d27':'#38443b';
+  hex=light>.89?'#111111':light>.7?'#1b1b1b':'#2a2a2a';
  }
  if(hex===token)return token;return hex+alpha;
 }
@@ -66,9 +66,9 @@ for(const name of fs.readdirSync(dist).filter(n=>n.endsWith('.css')&&n!=='theme.
 for(const name of fs.readdirSync(dist).filter(n=>n.endsWith('.html'))){
  const file=path.join(dist,name);let html=fs.readFileSync(file,'utf8');
  html=html.replace(/<link\b[^>]*data-nemo-theme[^>]*>/gi,'').replace(/<script\b[^>]*data-nemo-theme[^>]*>[\s\S]*?<\/script>/gi,'');
- html=html.replace(/(<meta charset="utf-8">)/i,'$1<script data-nemo-theme src="/theme.js?v=20261016-dark-2"></script>');
- html=html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi,tag=>{const href=tag.match(/href="([^"?]+)(?:\?[^" ]*)?"/i)?.[1],base=href&&path.basename(href);return base&&fs.existsSync(path.join(out,base))?tag+'<link data-nemo-theme rel="stylesheet" href="/themes/'+base+'?v=20261016-dark-2">':tag;});
- if(!/href="\/?cms-render\.css/.test(html))html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/themes/cms-render.css?v=20261016-dark-2"></head>');
- html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/theme.css?v=20261016-dark-2"></head>');
+ html=html.replace(/(<meta charset="utf-8">)/i,'$1<script data-nemo-theme src="/theme.js?v=20261016-black-1"></script>');
+ html=html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi,tag=>{const href=tag.match(/href="([^"?]+)(?:\?[^" ]*)?"/i)?.[1],base=href&&path.basename(href);return base&&fs.existsSync(path.join(out,base))?tag+'<link data-nemo-theme rel="stylesheet" href="/themes/'+base+'?v=20261016-black-1">':tag;});
+ if(!/href="\/?cms-render\.css/.test(html))html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/themes/cms-render.css?v=20261016-black-1"></head>');
+ html=html.replace('</head>','<link data-nemo-theme rel="stylesheet" href="/theme.css?v=20261016-black-1"></head>');
  fs.writeFileSync(file,html);
 }
